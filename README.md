@@ -1,33 +1,35 @@
 # Subnautica2.asl (Log-Based)
 
-This contains the **Scriptable Auto Splitter** version of Subnautica 2 Autosplitter for LiveSplit:
+This contains the **Scriptable Auto Splitter** version of the Subnautica 2 (Early Access) Autosplitter for LiveSplit:
 
 - `Subnautica2.asl`
 
 ## What This Version Includes
 
-## Start/Reset:
-- `Survival Start` Starts when you first Gain Control in new Survival Mode saves
-- `Creative Start` Starts when you first Gain Control in new Creative Mode saves
-- `Reset on Main Menu` - Reset when you Quit to Main Menu
+### Start/Reset:
+- `Survival Start` Starts when you first Gain Control in new Survival Mode saves.
+- `Creative Start` Starts when you first Gain Control in new Creative Mode saves.
+- `Reset on Main Menu` - Reset when you Quit to Main Menu.
 
-## Splits:
-- `Adaptations` - Splits when you unlock specific Adapation
+### Splits:
+- `Adaptations` - Splits when you unlock specific Adapation.
   - `Pressure Adaptation`
   - `Digestion Adaptation`
   - `Heat Resistance Adaptation`
   - `Axum Vision Adaptation`
-- `Crafts` Splits when you craft a Certain Item
+- `Crafts` Splits when you craft a Certain Item.
   - `High capacity O2 Tank`
   - `Bioscanner`
   - `Feedback Resonator`
   - `Habitat Builder`
-- `End Game Triggers` Splits on Specific End Triggers
-  - `Translate Message` Splits on Button Press for triggering the translation for the alien axum messages before `Thanks for Playing`
-  - `Thanks for Playing` Splits on the "Thanks for Playing" Popup
-- `Other Splits` Other specific Splits
+- `End Game Triggers` Splits on Specific End Triggers.
+  - `Translate Message` Splits on Button Press for triggering the translation for the alien axum messages before `Thanks for Playing`.
+  - `Thanks for Playing` Splits on the "Thanks for Playing" Popup.
+- `Other Splits` Other specific Splits.
   - `Lifepod Ascend` Splits when you specifically launch the ascent of the lifepod at the start of the game.
 
+### In-Game Time:
+When comparing against Game Time on Livesplit it will remove the Lifepod Ascending Cutscene Time, which is Exactly `85 Seconds`.
 
 ## Notes
 
