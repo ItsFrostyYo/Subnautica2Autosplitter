@@ -56,7 +56,6 @@ namespace LiveSplit.Subnautica2
         private int armThanksLines;
         private int translateStage;
         private int translateContextLines;
-        private long translateEnterLine;
         private bool pendingStrongInteract;
         private long lastInteractLineCounter;
         private const int TranslateContextWindowLines = 12000;
@@ -306,7 +305,6 @@ namespace LiveSplit.Subnautica2
             armThanksLines = 0;
             translateStage = 0;
             translateContextLines = 0;
-            translateEnterLine = 0L;
             ResetLogPosition();
         }
 
@@ -344,7 +342,6 @@ namespace LiveSplit.Subnautica2
             translateStage = 0;
             translateContextLines = 0;
             armThanksLines = 0;
-            translateEnterLine = 0L;
             orderedAutoProgress = 0;
         }
 
@@ -468,7 +465,6 @@ namespace LiveSplit.Subnautica2
                 armThanksLines = 0;
                 translateStage = 0;
                 translateContextLines = 0;
-                translateEnterLine = 0L;
                 if (line.IndexOf("MenuReturnReason=Quit", StringComparison.OrdinalIgnoreCase) >= 0)
                     mainMenuQuitPulse = true;
             }
@@ -480,7 +476,6 @@ namespace LiveSplit.Subnautica2
                 mode = "Survival";
                 translateStage = 0;
                 translateContextLines = 0;
-                translateEnterLine = 0L;
                 if (line.IndexOf("game=Creative", StringComparison.OrdinalIgnoreCase) >= 0)
                     mode = "Creative";
             }
@@ -550,14 +545,12 @@ namespace LiveSplit.Subnautica2
             {
                 translateStage = 1;
                 translateContextLines = TranslateContextWindowLines;
-                translateEnterLine = lineCounter;
             }
 
             if (line.IndexOf("voiceover_PDA_2D/Observatory2_Enter", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 translateStage = 1;
                 translateContextLines = TranslateContextWindowLines;
-                translateEnterLine = lineCounter;
             }
 
             if ((translateStage >= 1 || translateContextLines > 0)
@@ -566,7 +559,6 @@ namespace LiveSplit.Subnautica2
                 translateMessagePulse = true;
                 translateStage = 2;
                 translateContextLines = 0;
-                translateEnterLine = 0L;
             }
 
             if ((translateStage >= 1 || translateContextLines > 0)
@@ -575,7 +567,6 @@ namespace LiveSplit.Subnautica2
                 translateMessagePulse = true;
                 translateStage = 2;
                 translateContextLines = 0;
-                translateEnterLine = 0L;
             }
 
             if (translateStage == 2

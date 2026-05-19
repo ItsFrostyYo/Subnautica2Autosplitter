@@ -21,8 +21,11 @@ namespace LiveSplit.Subnautica2
         private bool hardAscendPauseConsumedThisRun;
         private int hardAscendForceUnpauseFramesRemaining;
         private long hardAscendPauseStartTicks;
+        private long lastEngineTickTicks;
         private static readonly long HardAscendPauseDurationTicks =
             (long)(Stopwatch.Frequency * 85.0);
+        private static readonly long EngineTickIntervalTicks =
+            (long)(Stopwatch.Frequency * 0.02); // 50 Hz log polling
         private const int HardAscendForceUnpauseFrames = 600;
 
         public Subnautica2Component(LiveSplitState state)
@@ -51,7 +54,12 @@ namespace LiveSplit.Subnautica2
             try
             {
                 engine.ApplySettings(settings);
-                engine.Tick();
+                long nowTicks = Stopwatch.GetTimestamp();
+                if (nowTicks - lastEngineTickTicks >= EngineTickIntervalTicks)
+                {
+                    engine.Tick();
+                    lastEngineTickTicks = nowTicks;
+                }
 
                 if (state.CurrentPhase == TimerPhase.Running
                     && !hardAscendPauseActive
@@ -105,6 +113,7 @@ namespace LiveSplit.Subnautica2
         private void OnStart(object sender, EventArgs e)
         {
             hardAscendForceUnpauseFramesRemaining = 0;
+            lastEngineTickTicks = 0;
             state.IsGameTimePaused = Loading();
             state.SetGameTime(TimeSpan.Zero);
             engine.OnTimerStart();
@@ -117,6 +126,7 @@ namespace LiveSplit.Subnautica2
             hardAscendPauseConsumedThisRun = false;
             hardAscendForceUnpauseFramesRemaining = 0;
             hardAscendPauseStartTicks = 0;
+            lastEngineTickTicks = 0;
             state.IsGameTimePaused = false;
             engine.OnTimerReset();
         }

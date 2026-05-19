@@ -1,3 +1,4 @@
+// Fixed compatibility version: use this as Subnautica2.asl, not .txt
 state("Subnautica2-Win64-Shipping")
 {
 }
@@ -5,7 +6,7 @@ state("Subnautica2-Win64-Shipping")
 startup
 {
     vars.logsDir = System.IO.Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
         "Subnautica2",
         "Saved",
         "Logs"
@@ -21,7 +22,7 @@ startup
         System.Text.RegularExpressions.RegexOptions.Compiled
     );
 
-    vars.Normalize = (Func<string, string>)(value =>
+    vars.Normalize = (System.Func<string, string>)(value =>
     {
         if (string.IsNullOrWhiteSpace(value))
             return string.Empty;
@@ -35,13 +36,13 @@ startup
         return x.ToLowerInvariant();
     });
 
-    vars.IsInteractPress = (Func<string, bool>)(line =>
+    vars.IsInteractPress = (System.Func<string, bool>)(line =>
     {
-        return line.IndexOf("AbilityInput: InputPressed IA_Interact", StringComparison.OrdinalIgnoreCase) >= 0
-            || line.IndexOf("AbilityInput: AbilityPressed GA_Interact", StringComparison.OrdinalIgnoreCase) >= 0;
+        return line.IndexOf("AbilityInput: InputPressed IA_Interact", System.StringComparison.OrdinalIgnoreCase) >= 0
+            || line.IndexOf("AbilityInput: AbilityPressed GA_Interact", System.StringComparison.OrdinalIgnoreCase) >= 0;
     });
 
-    vars.ResolveActiveLog = (Func<string>)(() =>
+    vars.ResolveActiveLog = (System.Func<string>)(() =>
     {
         string fallback = vars.defaultLogPath;
         try
@@ -100,13 +101,13 @@ startup
     settings.Add("split_lifepod_ascend", false, "Lifepod Ascend", "group_splits_other");
 
     vars.ascendPauseDuration = System.TimeSpan.FromSeconds(85);
-    vars.ClearAscendPause = (Action)(() =>
+    vars.ClearAscendPause = (System.Action)(() =>
     {
         vars.igtPauseForAscend = false;
         vars.lifepodAscendPauseStartUtc = System.DateTime.MinValue;
         vars.ascendPauseConsumed = false;
     });
-    vars.TryEndAscendPause = (Action)(() =>
+    vars.TryEndAscendPause = (System.Action)(() =>
     {
         if (!vars.igtPauseForAscend)
             return;
@@ -193,17 +194,17 @@ init
                     string line;
                     while ((line = sr.ReadLine()) != null)
                     {
-                        if (line.IndexOf("Browse Started Browse:", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                            line.IndexOf("/Game/Maps/L_ClientLobby", StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (line.IndexOf("Browse Started Browse:", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
+                            line.IndexOf("/Game/Maps/L_ClientLobby", System.StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             vars.isInMainMenu = true;
                             vars.mode = "Survival";
                         }
-                        else if (line.IndexOf("Browse Started Browse:", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                                 line.IndexOf("/Game/Maps/Main/L_Main", StringComparison.OrdinalIgnoreCase) >= 0)
+                        else if (line.IndexOf("Browse Started Browse:", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
+                                 line.IndexOf("/Game/Maps/Main/L_Main", System.StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             vars.isInMainMenu = false;
-                            vars.mode = line.IndexOf("game=Creative", StringComparison.OrdinalIgnoreCase) >= 0 ? "Creative" : "Survival";
+                            vars.mode = line.IndexOf("game=Creative", System.StringComparison.OrdinalIgnoreCase) >= 0 ? "Creative" : "Survival";
                         }
                     }
                 }
@@ -299,8 +300,8 @@ update
                     if (vars.pendingStrongInteract && (vars.lineCounter - vars.lastInteractLineCounter > 8))
                         vars.pendingStrongInteract = false;
 
-                    if (line.IndexOf("Browse Started Browse:", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                        line.IndexOf("/Game/Maps/L_ClientLobby", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (line.IndexOf("Browse Started Browse:", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
+                        line.IndexOf("/Game/Maps/L_ClientLobby", System.StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         vars.isInMainMenu = true;
                         vars.characterSelectOpen = false;
@@ -312,42 +313,42 @@ update
                         vars.translateEnterLine = 0L;
                         vars.translateOxygenLine = 0L;
                         vars.ClearAscendPause();
-                        if (line.IndexOf("MenuReturnReason=Quit", StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (line.IndexOf("MenuReturnReason=Quit", System.StringComparison.OrdinalIgnoreCase) >= 0)
                             vars.mainMenuQuitPulse = true;
                     }
 
-                    if (line.IndexOf("Browse Started Browse:", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                        line.IndexOf("/Game/Maps/Main/L_Main", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (line.IndexOf("Browse Started Browse:", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
+                        line.IndexOf("/Game/Maps/Main/L_Main", System.StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         vars.isInMainMenu = false;
                         vars.mode = "Survival";
                         vars.translateStage = 0;
                         vars.translateEnterLine = 0L;
                         vars.translateOxygenLine = 0L;
-                        if (line.IndexOf("game=Creative", StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (line.IndexOf("game=Creative", System.StringComparison.OrdinalIgnoreCase) >= 0)
                             vars.mode = "Creative";
                     }
 
-                    if (line.IndexOf("PushToLayer: Layer 5 Widget WBP_CharacterSelectScreen", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (line.IndexOf("PushToLayer: Layer 5 Widget WBP_CharacterSelectScreen", System.StringComparison.OrdinalIgnoreCase) >= 0)
                         vars.characterSelectOpen = true;
 
-                    if (line.IndexOf("Pop: Layer 5 Widget WBP_CharacterSelectScreen", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (line.IndexOf("Pop: Layer 5 Widget WBP_CharacterSelectScreen", System.StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         if (vars.characterSelectOpen)
                             vars.creativeStartPulse = true;
                         vars.characterSelectOpen = false;
                     }
 
-                    if (line.IndexOf("UUWEFirstPersonCamera::EndCinematicLocation", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (line.IndexOf("UUWEFirstPersonCamera::EndCinematicLocation", System.StringComparison.OrdinalIgnoreCase) >= 0)
                         vars.survivalStartPulse = true;
 
-                    if ((line.IndexOf("LogUWEGameplay: Adding global tag Gamestate.LifepodAscending", StringComparison.OrdinalIgnoreCase) >= 0
-                        || line.IndexOf("DA_Player_Ch1_LifepodRide1_StoryGoal", StringComparison.OrdinalIgnoreCase) >= 0))
+                    if ((line.IndexOf("LogUWEGameplay: Adding global tag Gamestate.LifepodAscending", System.StringComparison.OrdinalIgnoreCase) >= 0
+                        || line.IndexOf("DA_Player_Ch1_LifepodRide1_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0))
                     {
                         vars.lifepodAscendPulse = true;
                     }
 
-                    if (line.IndexOf("LogUWEGameplay: Adding global tag Gamestate.LifepodAscending", StringComparison.OrdinalIgnoreCase) >= 0
+                    if (line.IndexOf("LogUWEGameplay: Adding global tag Gamestate.LifepodAscending", System.StringComparison.OrdinalIgnoreCase) >= 0
                         && !vars.igtPauseForAscend
                         && !vars.ascendPauseConsumed
                         && !vars.isInMainMenu)
@@ -357,7 +358,7 @@ update
                         vars.ascendPauseConsumed = true;
                     }
 
-                    if (line.IndexOf("DA_Storygoal_Player_Ch1_AdaptationTutorial2", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (line.IndexOf("DA_Storygoal_Player_Ch1_AdaptationTutorial2", System.StringComparison.OrdinalIgnoreCase) >= 0)
                         vars.armPressureLines = 220;
 
                     if (vars.IsInteractPress(line))
@@ -366,7 +367,7 @@ update
                         vars.pendingStrongInteract = true;
                     }
 
-                    if (line.IndexOf("RemoveCurrentMappingContext: IMC_PlayerCharacter", StringComparison.OrdinalIgnoreCase) >= 0
+                    if (line.IndexOf("RemoveCurrentMappingContext: IMC_PlayerCharacter", System.StringComparison.OrdinalIgnoreCase) >= 0
                         && vars.pendingStrongInteract
                         && (vars.lineCounter - vars.lastInteractLineCounter <= 8))
                     {
@@ -378,28 +379,28 @@ update
                         }
                     }
 
-                    if (line.IndexOf("DA_Storygoal_Player_Ch1_AdaptationTutorial_Interact", StringComparison.OrdinalIgnoreCase) >= 0
+                    if (line.IndexOf("DA_Storygoal_Player_Ch1_AdaptationTutorial_Interact", System.StringComparison.OrdinalIgnoreCase) >= 0
                         && !vars.firedPressureAdaptation)
                     {
                         vars.pressureAdaptationPulse = true;
                     }
 
-                    if ((line.IndexOf("DA_Adaptation_Digestion_Acquired_StoryGoal", StringComparison.OrdinalIgnoreCase) >= 0
-                        || line.IndexOf("DA_Adaptation_Digestive_Acquired_1_StoryGoal", StringComparison.OrdinalIgnoreCase) >= 0))
+                    if ((line.IndexOf("DA_Adaptation_Digestion_Acquired_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0
+                        || line.IndexOf("DA_Adaptation_Digestive_Acquired_1_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0))
                     {
                         vars.digestionAdaptationPulse = true;
                     }
 
-                    if (line.IndexOf("DA_Adaptation_HeatResistance_Acquired_StoryGoal", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (line.IndexOf("DA_Adaptation_HeatResistance_Acquired_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0)
                         vars.heatAdaptationPulse = true;
 
-                    if ((line.IndexOf("DA_Adaptation_AxumGlyphs_Acquired_StoryGoal", StringComparison.OrdinalIgnoreCase) >= 0
-                        || line.IndexOf("DA_Ruins_AxumGlyph_DB_StoryGoal", StringComparison.OrdinalIgnoreCase) >= 0))
+                    if ((line.IndexOf("DA_Adaptation_AxumGlyphs_Acquired_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0
+                        || line.IndexOf("DA_Ruins_AxumGlyph_DB_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0))
                     {
                         vars.axumVisionAdaptationPulse = true;
                     }
 
-                    if (line.IndexOf("DA_Observatory2_Enter_StoryGoal", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (line.IndexOf("DA_Observatory2_Enter_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         vars.translateStage = 1;
                         vars.translateEnterLine = vars.lineCounter;
@@ -407,7 +408,7 @@ update
                     }
 
                     if (vars.translateStage == 1
-                        && line.IndexOf("voiceover_PDA_2D/Observatory2_OxygenatedWater", StringComparison.OrdinalIgnoreCase) >= 0)
+                        && line.IndexOf("voiceover_PDA_2D/Observatory2_OxygenatedWater", System.StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         vars.translateStage = 2;
                         vars.translateOxygenLine = vars.lineCounter;
@@ -418,7 +419,7 @@ update
                         && vars.translateOxygenLine > 0
                         && vars.translateOxygenLine > vars.translateEnterLine
                         && vars.lineCounter > vars.translateOxygenLine
-                        && line.IndexOf("AbilityInput: AbilityPressed GA_Interact_C_", StringComparison.OrdinalIgnoreCase) >= 0)
+                        && line.IndexOf("AbilityInput: AbilityPressed GA_Interact_C_", System.StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         vars.translateMessagePulse = true;
                         vars.translateStage = 0;
@@ -427,14 +428,14 @@ update
                     }
 
                     if (vars.translateStage == 2
-                        && line.IndexOf("voiceover_PDA_2D/ClimateLab_AnalyzingMessage_Line3", StringComparison.OrdinalIgnoreCase) >= 0)
+                        && line.IndexOf("voiceover_PDA_2D/ClimateLab_AnalyzingMessage_Line3", System.StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         vars.armThanksLines = 5000;
                     }
 
                     if (vars.translateStage == 2
                         && vars.armThanksLines > 0
-                        && line.IndexOf("LogUIActionRouter: Display: Applying input config for leaf-most node [WBP_PlayerModalMessage_C_", StringComparison.OrdinalIgnoreCase) >= 0)
+                        && line.IndexOf("LogUIActionRouter: Display: Applying input config for leaf-most node [WBP_PlayerModalMessage_C_", System.StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         vars.thanksForPlayingPulse = true;
                         vars.armThanksLines = 0;
@@ -474,7 +475,7 @@ update
         {
             vars.staleFrames = 0;
             string candidate = vars.ResolveActiveLog();
-            if (!string.Equals(candidate, vars.logPath, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(candidate, vars.logPath, System.StringComparison.OrdinalIgnoreCase))
             {
                 vars.logPath = candidate;
                 try
