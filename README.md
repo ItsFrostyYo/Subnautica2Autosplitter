@@ -7,11 +7,13 @@ This contains the **Scriptable Auto Splitter** version of the Subnautica 2 (Earl
 ## What This Version Includes
 
 ### Start/Reset:
+
 - `Survival Start` Starts when you first Gain Control in new Survival Mode saves.
 - `Creative Start` Starts when you first Gain Control in new Creative Mode saves.
 - `Reset on Main Menu` - Reset when you Quit to Main Menu.
 
 ### Splits:
+
 - `Adaptations` - Splits when you unlock specific Adapation.
   - `Pressure Adaptation`
   - `Digestion Adaptation`
@@ -29,6 +31,7 @@ This contains the **Scriptable Auto Splitter** version of the Subnautica 2 (Earl
   - `Lifepod Ascend` Splits when you specifically launch the ascent of the lifepod at the start of the game.
 
 ### In-Game Time:
+
 When comparing against Game Time on Livesplit it will remove the Lifepod Ascending Cutscene Time, which is Exactly `85 Seconds`.
 
 ## Notes
