@@ -7,8 +7,8 @@ This contains the **Scriptable Auto Splitter** version of Subnautica 2 Autosplit
 ## What This Version Includes
 
 ## Start/Reset:
-- `Survival Start` Starts when you Gain Control in Survival Modes Start
-- `Creative Start` Starts when you Gain Control in Creative Modes Start
+- `Survival Start` Starts when you first Gain Control in new Survival Mode saves
+- `Creative Start` Starts when you first Gain Control in new Creative Mode saves
 - `Reset on Main Menu` - Reset when you Quit to Main Menu
 
 ## Splits:
