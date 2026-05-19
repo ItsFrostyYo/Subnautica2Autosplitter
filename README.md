@@ -1,42 +1,37 @@
 # Subnautica2.asl (Log-Based)
 
-This folder contains the **Scriptable Auto Splitter** version for LiveSplit:
+This contains the **Scriptable Auto Splitter** version of Subnautica 2 Autosplitter for LiveSplit:
 
 - `Subnautica2.asl`
 
 ## What This Version Includes
 
-- Start/Reset:
-- `Survival Start` (default: ON)
-- `Creative Start` (default: OFF)
-- `Reset on Main Menu` (default: ON)
+## Start/Reset:
+- `Survival Start` Starts when you Gain Control in Survival Modes Start
+- `Creative Start` Starts when you Gain Control in Creative Modes Start
+- `Reset on Main Menu` - Reset when you Quit to Main Menu
 
-- Split groups:
-- `Adaptations`
-- `Crafts`
-- `End Game Triggers`
-- `Other Splits`
+## Splits:
+- `Adaptations` - Splits when you unlock specific Adapation
+  - `Pressure Adaptation`
+  - `Digestion Adaptation`
+  - `Heat Resistance Adaptation`
+  - `Axum Vision Adaptation`
+- `Crafts` Splits when you craft a Certain Item
+  - `High capacity O2 Tank`
+  - `Bioscanner`
+  - `Feedback Resonator`
+  - `Habitat Builder`
+- `End Game Triggers` Splits on Specific End Triggers
+  - `Translate Message` Splits on Button Press for triggering the translation for the alien axum messages before `Thanks for Playing`
+  - `Thanks for Playing` Splits on the "Thanks for Playing" Popup
+- `Other Splits` Other specific Splits
+  - `Lifepod Ascend` Splits when you specifically launch the ascent of the lifepod at the start of the game.
 
-- Current key custom splits:
-- Lifepod Ascend
-- Pressure / Digestion / Heat / Axum Vision adaptations
-- High Capacity O2 Tank
-- Feedback Resonator
-- Bioscanner
-- Habitat Builder
-- Translate Message
-- Thanks for Playing
-
-## Translate Message Trigger Order
-
-`Translate Message` fires only in this order:
-
-1. `DA_Observatory2_Enter_StoryGoal`
-2. `voiceover_PDA_2D/Observatory2_OxygenatedWater`
-3. Next `AbilityPressed GA_Interact_C_####`
 
 ## Notes
 
 - This is a **log-based** autosplitter (not memory-based).
 - Logs are read from:
 - `%LOCALAPPDATA%\Subnautica2\Saved\Logs`
+- `Translate Message` autosplit can sometimes split incorrectly if you dont restart the game to start new logs after a completion
