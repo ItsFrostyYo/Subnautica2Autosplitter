@@ -25,7 +25,7 @@ namespace LiveSplit.Subnautica2
         private static readonly long HardAscendPauseDurationTicks =
             (long)(Stopwatch.Frequency * 85.0);
         private static readonly long EngineTickIntervalTicks =
-            (long)(Stopwatch.Frequency * 0.02); // 50 Hz log polling
+            (long)(Stopwatch.Frequency * 0.03); // ~33 Hz log polling
         private const int HardAscendForceUnpauseFrames = 600;
 
         public Subnautica2Component(LiveSplitState state)

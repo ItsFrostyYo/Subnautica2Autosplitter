@@ -59,6 +59,7 @@ namespace LiveSplit.Subnautica2
         private bool pendingStrongInteract;
         private long lastInteractLineCounter;
         private const int TranslateContextWindowLines = 12000;
+        private const int MaxLinesPerTick = 1000;
 
         public bool MainMenuResetPending { get; private set; }
 
@@ -98,23 +99,19 @@ namespace LiveSplit.Subnautica2
                 return;
             }
 
-            long len;
-            try { len = new FileInfo(logPath).Length; }
-            catch { return; }
-
-            if (len < logPos)
-                logPos = len;
-
             int linesRead = 0;
             try
             {
                 using (var fs = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
+                    if (fs.Length < logPos)
+                        logPos = fs.Length;
+
                     fs.Seek(logPos, SeekOrigin.Begin);
                     using (var sr = new StreamReader(fs))
                     {
                         string line;
-                        while ((line = sr.ReadLine()) != null)
+                        while (linesRead < MaxLinesPerTick && (line = sr.ReadLine()) != null)
                         {
                             linesRead++;
                             lineCounter++;
