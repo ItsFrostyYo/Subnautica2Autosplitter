@@ -37,3 +37,7 @@ When comparing against Game Time on Livesplit it will remove the Lifepod Ascendi
 - Logs are read from:
 - `%LOCALAPPDATA%\Subnautica2\Saved\Logs`
 - `Translate Message` autosplit can sometimes split incorrectly if you dont restart the game to start new logs after a completion
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE).
