@@ -11,6 +11,10 @@ startup
         "Logs"
     );
     vars.defaultLogPath = System.IO.Path.Combine(vars.logsDir, "Subnautica2.log");
+    vars.rxValidRuntimeLogName = new System.Text.RegularExpressions.Regex(
+        @"^Subnautica2(?:_\d+)?\.log$",
+        System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase
+    );
 
     vars.rxCraftSucceed = new System.Text.RegularExpressions.Regex(
         @"LogCrafting: Crafting recipe .*?/([^/\.]+)\.[^\s]+ succeeded",
@@ -50,7 +54,7 @@ startup
             for (int i = 0; i < files.Length; i++)
             {
                 var f = files[i];
-                if (f.Name.IndexOf("backup", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (!vars.rxValidRuntimeLogName.IsMatch(f.Name))
                     continue;
 
                 if (best == null
@@ -94,6 +98,26 @@ startup
 
     settings.Add("group_splits_other", true, "Other Splits", "group_splits");
     settings.Add("split_lifepod_ascend", false, "Lifepod Ascend", "group_splits_other");
+
+    vars.ascendPauseDuration = System.TimeSpan.FromSeconds(85);
+    vars.ClearAscendPause = (Action)(() =>
+    {
+        vars.igtPauseForAscend = false;
+        vars.lifepodAscendPauseStartUtc = System.DateTime.MinValue;
+        vars.ascendPauseConsumed = false;
+    });
+    vars.TryEndAscendPause = (Action)(() =>
+    {
+        if (!vars.igtPauseForAscend)
+            return;
+        if (vars.lifepodAscendPauseStartUtc == System.DateTime.MinValue)
+            return;
+        if ((System.DateTime.UtcNow - vars.lifepodAscendPauseStartUtc) >= vars.ascendPauseDuration)
+        {
+            vars.igtPauseForAscend = false;
+            vars.lifepodAscendPauseStartUtc = System.DateTime.MinValue;
+        }
+    });
 }
 
 init
@@ -145,7 +169,8 @@ init
     vars.lastInteractLineCounter = 0L;
 
     vars.igtPauseForAscend = false;
-    vars.igtPauseEndUtc = DateTime.MinValue;
+    vars.lifepodAscendPauseStartUtc = System.DateTime.MinValue;
+    vars.ascendPauseConsumed = false;
 
     vars.splitNow = false;
     vars.resetNow = false;
@@ -154,6 +179,36 @@ init
     {
         if (System.IO.File.Exists(vars.logPath))
             vars.logPos = new System.IO.FileInfo(vars.logPath).Length;
+
+        // If script attaches while game is already open, infer current menu/in-game state
+        // from recent log lines so autostart logic doesn't get stuck in default menu=true.
+        if (System.IO.File.Exists(vars.logPath))
+        {
+            using (var fs = new System.IO.FileStream(vars.logPath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
+            {
+                long start = fs.Length > 131072 ? fs.Length - 131072 : 0L;
+                fs.Seek(start, System.IO.SeekOrigin.Begin);
+                using (var sr = new System.IO.StreamReader(fs))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (line.IndexOf("Browse Started Browse:", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                            line.IndexOf("/Game/Maps/L_ClientLobby", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            vars.isInMainMenu = true;
+                            vars.mode = "Survival";
+                        }
+                        else if (line.IndexOf("Browse Started Browse:", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                                 line.IndexOf("/Game/Maps/Main/L_Main", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            vars.isInMainMenu = false;
+                            vars.mode = line.IndexOf("game=Creative", StringComparison.OrdinalIgnoreCase) >= 0 ? "Creative" : "Survival";
+                        }
+                    }
+                }
+            }
+        }
     }
     catch
     {
@@ -182,6 +237,8 @@ update
     vars.translateMessagePulse = false;
     vars.thanksForPlayingPulse = false;
 
+    vars.TryEndAscendPause();
+
     bool runActiveNow = false;
     try
     {
@@ -190,11 +247,6 @@ update
     catch
     {
         runActiveNow = false;
-    }
-
-    if (vars.igtPauseForAscend && DateTime.UtcNow >= vars.igtPauseEndUtc)
-    {
-        vars.igtPauseForAscend = false;
     }
 
     if (!System.IO.File.Exists(vars.logPath))
@@ -259,7 +311,7 @@ update
                         vars.translateStage = 0;
                         vars.translateEnterLine = 0L;
                         vars.translateOxygenLine = 0L;
-                        vars.igtPauseForAscend = false;
+                        vars.ClearAscendPause();
                         if (line.IndexOf("MenuReturnReason=Quit", StringComparison.OrdinalIgnoreCase) >= 0)
                             vars.mainMenuQuitPulse = true;
                     }
@@ -295,10 +347,14 @@ update
                         vars.lifepodAscendPulse = true;
                     }
 
-                    if (line.IndexOf("LogUWEGameplay: Adding global tag Gamestate.LifepodAscending", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (line.IndexOf("LogUWEGameplay: Adding global tag Gamestate.LifepodAscending", StringComparison.OrdinalIgnoreCase) >= 0
+                        && !vars.igtPauseForAscend
+                        && !vars.ascendPauseConsumed
+                        && !vars.isInMainMenu)
                     {
                         vars.igtPauseForAscend = true;
-                        vars.igtPauseEndUtc = DateTime.UtcNow.AddSeconds(85);
+                        vars.lifepodAscendPauseStartUtc = System.DateTime.UtcNow;
+                        vars.ascendPauseConsumed = true;
                     }
 
                     if (line.IndexOf("DA_Storygoal_Player_Ch1_AdaptationTutorial2", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -414,7 +470,7 @@ update
     else
     {
         vars.staleFrames++;
-        if (vars.staleFrames > 90)
+        if (vars.staleFrames > 15)
         {
             vars.staleFrames = 0;
             string candidate = vars.ResolveActiveLog();
@@ -576,6 +632,7 @@ reset
 
 isLoading
 {
+    vars.TryEndAscendPause();
     return vars.igtPauseForAscend;
 }
 
@@ -597,6 +654,7 @@ onStart
     vars.armThanksLines = 0;
     vars.translateEnterLine = 0L;
     vars.translateOxygenLine = 0L;
+    vars.ClearAscendPause();
 }
 
 onReset
@@ -623,8 +681,7 @@ onReset
     vars.translateStage = 0;
     vars.translateEnterLine = 0L;
     vars.translateOxygenLine = 0L;
-    vars.igtPauseForAscend = false;
-    vars.igtPauseEndUtc = DateTime.MinValue;
+    vars.ClearAscendPause();
 
     try
     {

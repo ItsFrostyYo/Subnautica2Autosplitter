@@ -1,0 +1,16 @@
+Component/bin/
+Component/obj/
+
+# Prevent accidental root clutter from local LiveSplit copies
+/*.dll
+/*.pdb
+/*.dll.config
+/*.exe.config
+
+/Artifacts
+
+# Keep published component binaries folder
+!/Components/
+!/Components/*.dll
+!/Components/*.pdb
+!/Components/*.xml

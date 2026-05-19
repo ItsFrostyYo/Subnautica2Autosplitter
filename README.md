@@ -1,20 +1,26 @@
-# Subnautica2.asl (Log-Based)
+# Subnautica 2 (Log-Based)
 
-This contains the **Scriptable Auto Splitter** version of the Subnautica 2 (Early Access) Autosplitter for LiveSplit:
+This contains the smaller **LiveSplit Component** version of the Subnautica 2 (Early Access) autosplitter.
 
-- `Subnautica2.asl`
+- `Components/LiveSplit.Subnautica2.dll`
 
-## What This Version Includes
+## What this version includes
 
-### Start/Reset:
+### Start / Reset
 
-- `Survival Start` Starts when you first Gain Control in new Survival Mode saves.
-- `Creative Start` Starts when you first Gain Control in new Creative Mode saves.
-- `Reset on Main Menu` - Reset when you Quit to Main Menu.
+- `Survival Start` starts when you gain control in a new Survival run.
+- `Creative Start` starts when you gain control in a new Creative run.
+- `Reset on Main Menu` resets when you quit back to main menu.
+
+### Others
+
+- `Warn on Reset if Gold` shows LiveSplit's save-golds prompt on auto-reset.
+- `Ordered Splits (LiveSplit)` only allows autosplits that match your current split file order. If you skip a manual split in LiveSplit, autosplitter progression follows that skip.
+- `Ordered Splits (Auto-Splits)` follows the autosplitter list order only (top to bottom in the settings list), independent of split names in your LiveSplit file.
 
 ### Splits:
 
-- `Adaptations` - Splits when you unlock specific Adapation.
+- `Adaptations` - Splits when you unlock Certain Adapation.
   - `Pressure Adaptation`
   - `Digestion Adaptation`
   - `Heat Resistance Adaptation`
@@ -30,17 +36,16 @@ This contains the **Scriptable Auto Splitter** version of the Subnautica 2 (Earl
 - `Other Splits` Other specific Splits.
   - `Lifepod Ascend` Splits when you specifically launch the ascent of the lifepod at the start of the game.
 
-### In-Game Time:
+### In-Game Time
 
-When comparing against Game Time on Livesplit it will remove the Lifepod Ascending Cutscene Time, which is Exactly `85 Seconds`.
+When comparing against Game Time, lifepod ascend cutscene time is removed for exactly `85` seconds.
 
 ## Notes
 
 - This is a **log-based** autosplitter (not memory-based).
-- Logs are read from:
-- `%LOCALAPPDATA%\Subnautica2\Saved\Logs`
-- `Translate Message` autosplit can sometimes split incorrectly if you dont restart the game to start new logs after a completion
+- Logs are read from `%LOCALAPPDATA%\\Subnautica2\\Saved\\Logs`.
+- `Subnautica2.asl` is kept as a legacy fallback.
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](./LICENSE).
+MIT License. See [LICENSE](./LICENSE).
