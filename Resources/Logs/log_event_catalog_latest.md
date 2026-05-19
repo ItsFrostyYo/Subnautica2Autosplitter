@@ -1,7 +1,7 @@
 ﻿# Subnautica 2 Log Event Catalog
 
 Generated: 2026-05-13 18:47:42
-Source log directory: C:\Users\mxz\AppData\Local\Subnautica2\Saved\Logs
+Source log directory: C:\Users\*\AppData\Local\Subnautica2\Saved\Logs
 Scanned files: 12
 
 ## Category Summary
