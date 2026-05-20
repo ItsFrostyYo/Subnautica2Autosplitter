@@ -1,6 +1,6 @@
 # Subnautica 2 Autosplitter (Uhara-Memory Based)
 
-This contains the smaller **LiveSplit Component** version of the Subnautica 2 (Early Access) autosplitter.
+This contains the **Uhara-Memory Based** **.asl** version of the Subnautica 2 (Early Access) autosplitter.
 
 - `asl/Subnautica2.asl`
 
