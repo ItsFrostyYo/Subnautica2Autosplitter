@@ -5,3 +5,6 @@
 !/README.md
 !/asl/
 !/asl/**
+!/Component/
+/Component/*
+!/Component/uhara10
