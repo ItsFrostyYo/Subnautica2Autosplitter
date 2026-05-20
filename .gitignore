@@ -8,6 +8,9 @@ Component/obj/
 /*.exe.config
 
 /Artifacts
+/Components
+/Component
+/Memory Reading Version
 
 # Keep published component binaries folder
 !/Components/

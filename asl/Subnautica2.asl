@@ -1,696 +1,90 @@
-// Fixed compatibility version: use this as Subnautica2.asl, not .txt
-state("Subnautica2-Win64-Shipping")
-{
-}
+state("Subnautica2-Win64-Shipping"){}
 
 startup
 {
-    vars.logsDir = System.IO.Path.Combine(
-        System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData),
-        "Subnautica2",
-        "Saved",
-        "Logs"
-    );
-    vars.defaultLogPath = System.IO.Path.Combine(vars.logsDir, "Subnautica2.log");
-    vars.rxValidRuntimeLogName = new System.Text.RegularExpressions.Regex(
-        @"^Subnautica2(?:_\d+)?\.log$",
-        System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase
-    );
+    Assembly.Load(File.ReadAllBytes("Components/uhara10")).CreateInstance("Main");
+    vars.Uhara.AlertLoadless(); // Sends Alert for using Game Time for Load Removal
 
-    vars.rxCraftSucceed = new System.Text.RegularExpressions.Regex(
-        @"LogCrafting: Crafting recipe .*?/([^/\.]+)\.[^\s]+ succeeded",
-        System.Text.RegularExpressions.RegexOptions.Compiled
-    );
+    vars.introCutsceneLoadRemovalActive = false;
 
-    vars.Normalize = (System.Func<string, string>)(value =>
+    dynamic[,] _settings =
     {
-        if (string.IsNullOrWhiteSpace(value))
-            return string.Empty;
-        string x = value.Trim();
-        x = x.Replace(" ", "");
-        x = x.Replace("_", "");
-        x = x.Replace("-", "");
-        x = x.Replace("/", "");
-        x = x.Replace(".", "");
-        x = x.Replace(":", "");
-        return x.ToLowerInvariant();
-    });
+        // Normal Splits (Currently Above)
+        { "ResetOnMainMenu", false, "Reset on Main Menu", null },
 
-    vars.IsInteractPress = (System.Func<string, bool>)(line =>
-    {
-        return line.IndexOf("AbilityInput: InputPressed IA_Interact", System.StringComparison.OrdinalIgnoreCase) >= 0
-            || line.IndexOf("AbilityInput: AbilityPressed GA_Interact", System.StringComparison.OrdinalIgnoreCase) >= 0;
-    });
+        // Grouped Settings (Currently Below)
+        { "group_splits", true, "Splits", null }, // Group Categorizing, named "Splits"
+        // Where the Grouped Splits listed are
+        { "AdaptationSplits", false, "Adaptation Splits", "group_splits" },
+	    { "LifepodAscend", false, "Lifepod Ascend", "group_splits" },
+        { "End", true, "End Split", "group_splits" },
+    };
+    // Creates Settings
+	vars.Uhara.Settings.Create(_settings);
 
-    vars.ResolveActiveLog = (System.Func<string>)(() =>
-    {
-        string fallback = vars.defaultLogPath;
-        try
-        {
-            if (!System.IO.Directory.Exists(vars.logsDir))
-                return fallback;
-
-            var files = new System.IO.DirectoryInfo(vars.logsDir).GetFiles("Subnautica2*.log");
-            System.IO.FileInfo best = null;
-            for (int i = 0; i < files.Length; i++)
-            {
-                var f = files[i];
-                if (!vars.rxValidRuntimeLogName.IsMatch(f.Name))
-                    continue;
-
-                if (best == null
-                    || f.LastWriteTimeUtc > best.LastWriteTimeUtc
-                    || (f.LastWriteTimeUtc == best.LastWriteTimeUtc && f.Length > best.Length))
-                {
-                    best = f;
-                }
-            }
-
-            if (best != null)
-                return best.FullName;
-        }
-        catch
-        {
-        }
-        return fallback;
-    });
-
-    settings.Add("group_start_reset", true, "Start/Reset");
-    settings.Add("survival_start", true, "Survival Start", "group_start_reset");
-    settings.Add("creative_start", false, "Creative Start", "group_start_reset");
-    settings.Add("reset_on_main_menu", true, "Reset on Main Menu", "group_start_reset");
-
-    settings.Add("group_splits", true, "Splits");
-    settings.Add("group_splits_adaptations", true, "Adaptations", "group_splits");
-    settings.Add("split_pressure_adaptation", false, "Pressure Adaptation", "group_splits_adaptations");
-    settings.Add("split_digestions_adaptation", false, "Digestion Adaptation", "group_splits_adaptations");
-    settings.Add("split_heat_adaptation", false, "Heat Adaptation", "group_splits_adaptations");
-    settings.Add("split_axum_vision_adaptation", false, "Axum Vision Adaptation", "group_splits_adaptations");
-
-    settings.Add("group_splits_crafts", true, "Crafts", "group_splits");
-    settings.Add("split_high_capacity_o2_tank", false, "High Capacity O2 Tank", "group_splits_crafts");
-    settings.Add("split_feedback_resonator", false, "Feedback Resonator", "group_splits_crafts");
-    settings.Add("split_bioscanner", false, "Bioscanner", "group_splits_crafts");
-    settings.Add("split_habitat_builder", false, "Habitat Builder", "group_splits_crafts");
-
-    settings.Add("group_splits_end_game_triggers", true, "End Game Triggers", "group_splits");
-    settings.Add("split_translate_message", false, "Translate Message", "group_splits_end_game_triggers");
-    settings.Add("split_thanks_for_playing", false, "Thanks for Playing", "group_splits_end_game_triggers");
-
-    settings.Add("group_splits_other", true, "Other Splits", "group_splits");
-    settings.Add("split_lifepod_ascend", false, "Lifepod Ascend", "group_splits_other");
-
-    vars.ascendPauseDuration = System.TimeSpan.FromSeconds(85);
-    vars.ClearAscendPause = (System.Action)(() =>
-    {
-        vars.igtPauseForAscend = false;
-        vars.lifepodAscendPauseStartUtc = System.DateTime.MinValue;
-        vars.ascendPauseConsumed = false;
-    });
-    vars.TryEndAscendPause = (System.Action)(() =>
-    {
-        if (!vars.igtPauseForAscend)
-            return;
-        if (vars.lifepodAscendPauseStartUtc == System.DateTime.MinValue)
-            return;
-        if ((System.DateTime.UtcNow - vars.lifepodAscendPauseStartUtc) >= vars.ascendPauseDuration)
-        {
-            vars.igtPauseForAscend = false;
-            vars.lifepodAscendPauseStartUtc = System.DateTime.MinValue;
-        }
-    });
 }
-
 init
 {
-    vars.logPath = vars.ResolveActiveLog();
-    vars.logPos = 0L;
-    vars.staleFrames = 0;
-    vars.lineCounter = 0L;
+    // Uhara Initalize
+    vars.Utils = vars.Uhara.CreateTool("UnrealEngine", "Utils");
+    vars.Events = vars.Uhara.CreateTool("UnrealEngine", "Events");
+    vars.Utils.ExpandScanUtilitySignatures("UObject_BeginDestroy", "40 53 48 83 EC 40 8B 41 08 48 8B D9 0F BA E0 0F 72");
 
-    vars.startedThisAttempt = false;
-    vars.isInMainMenu = true;
-    vars.mode = "Survival";
-    vars.characterSelectOpen = false;
+    vars.Utils.GEngine = vars.Uhara.ScanRel(3, "48 89 05 ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 3D ?? ?? ?? ?? ?? 72 ?? 48");
+    if (vars.Utils.GEngine != IntPtr.Zero) vars.Uhara.Log("GEngine found at " + vars.Utils.GEngine.ToString("X"));
+    if (vars.Utils.GWorld != IntPtr.Zero) vars.Uhara.Log("GWorld found at " + vars.Utils.GWorld.ToString("X")); 
+    if (vars.Utils.FNames != IntPtr.Zero) vars.Uhara.Log("FNames found at " + vars.Utils.FNames.ToString("X"));
+    
+    // Start Event Listeners
+    vars.Events.FunctionFlag("SurvivalStart","BPC_SN2SyncedAnimation_C", "BPC_SN2SyncedAnimation", "OnInterrupted_6CE57B834482AC68669FA3BD7C032291");
+    vars.Events.FunctionFlag("CreativeStart", "BP_CreativeModePlayerStart_C", "BP_CreativeModePlayerStart_C_UAID_F02F74AC8D0CF16102", "OnStartConditionsApplied");
+    // Split Event Listeners
+    vars.Events.FunctionFlag("Adaptation", "BP_AngelCombCore_Ripple_NotifyState_C", "BP_AngelCombCore_Ripple_NotifyState_C", "Received_NotifyBegin");
+    vars.Events.FunctionFlag("LifepodAscend", "BP_NarrativeSignal_C", "BP_NarrativeSignal_C_UAID_60CF846429E036A502", "OnUnlocked_62920D1448BD71509596E5B554437304");
+    vars.Events.FunctionFlag("End", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
+    // Reset/Load Removal Event Listeners
+    vars.Events.FunctionFlag("ResetOnMainMenu", "WBP_MainLobbyScreen_C", "WBP_MainLobbyScreen_C", "Construct");
+    vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
 
-    vars.survivalStartPulse = false;
-    vars.creativeStartPulse = false;
-    vars.mainMenuQuitPulse = false;
-
-    vars.lifepodAscendPulse = false;
-    vars.pressureAdaptationPulse = false;
-    vars.digestionAdaptationPulse = false;
-    vars.heatAdaptationPulse = false;
-    vars.axumVisionAdaptationPulse = false;
-    vars.highCapacityO2TankPulse = false;
-    vars.feedbackResonatorPulse = false;
-    vars.bioscannerPulse = false;
-    vars.habitatBuilderPulse = false;
-    vars.translateMessagePulse = false;
-    vars.thanksForPlayingPulse = false;
-
-    vars.firedLifepodAscend = false;
-    vars.firedPressureAdaptation = false;
-    vars.firedDigestionAdaptation = false;
-    vars.firedHeatAdaptation = false;
-    vars.firedAxumVisionAdaptation = false;
-    vars.firedHighCapacityO2Tank = false;
-    vars.firedFeedbackResonator = false;
-    vars.firedBioscanner = false;
-    vars.firedHabitatBuilder = false;
-    vars.firedTranslateMessage = false;
-    vars.firedThanksForPlaying = false;
-
-    vars.armPressureLines = 0;
-    vars.armThanksLines = 0;
-    vars.translateStage = 0; // 0=idle, 1=seen Enter, 2=seen OxygenatedWater after Enter
-    vars.translateEnterLine = 0L;
-    vars.translateOxygenLine = 0L;
-    vars.pendingStrongInteract = false;
-    vars.lastInteractLineCounter = 0L;
-
-    vars.igtPauseForAscend = false;
-    vars.lifepodAscendPauseStartUtc = System.DateTime.MinValue;
-    vars.ascendPauseConsumed = false;
-
-    vars.splitNow = false;
-    vars.resetNow = false;
-
-    try
-    {
-        if (System.IO.File.Exists(vars.logPath))
-            vars.logPos = new System.IO.FileInfo(vars.logPath).Length;
-
-        // If script attaches while game is already open, infer current menu/in-game state
-        // from recent log lines so autostart logic doesn't get stuck in default menu=true.
-        if (System.IO.File.Exists(vars.logPath))
-        {
-            using (var fs = new System.IO.FileStream(vars.logPath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
-            {
-                long start = fs.Length > 131072 ? fs.Length - 131072 : 0L;
-                fs.Seek(start, System.IO.SeekOrigin.Begin);
-                using (var sr = new System.IO.StreamReader(fs))
-                {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        if (line.IndexOf("Browse Started Browse:", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
-                            line.IndexOf("/Game/Maps/L_ClientLobby", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            vars.isInMainMenu = true;
-                            vars.mode = "Survival";
-                        }
-                        else if (line.IndexOf("Browse Started Browse:", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
-                                 line.IndexOf("/Game/Maps/Main/L_Main", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            vars.isInMainMenu = false;
-                            vars.mode = line.IndexOf("game=Creative", System.StringComparison.OrdinalIgnoreCase) >= 0 ? "Creative" : "Survival";
-                        }
-                    }
-                }
-            }
-        }
-    }
-    catch
-    {
-        vars.logPos = 0L;
-    }
+    vars.introCutsceneLoadRemovalActive = false;
 }
-
-update
-{
-    vars.splitNow = false;
-    vars.resetNow = false;
-
-    vars.survivalStartPulse = false;
-    vars.creativeStartPulse = false;
-    vars.mainMenuQuitPulse = false;
-
-    vars.lifepodAscendPulse = false;
-    vars.pressureAdaptationPulse = false;
-    vars.digestionAdaptationPulse = false;
-    vars.heatAdaptationPulse = false;
-    vars.axumVisionAdaptationPulse = false;
-    vars.highCapacityO2TankPulse = false;
-    vars.feedbackResonatorPulse = false;
-    vars.bioscannerPulse = false;
-    vars.habitatBuilderPulse = false;
-    vars.translateMessagePulse = false;
-    vars.thanksForPlayingPulse = false;
-
-    vars.TryEndAscendPause();
-
-    bool runActiveNow = false;
-    try
-    {
-        runActiveNow = (int)timer.CurrentPhase == 1;
-    }
-    catch
-    {
-        runActiveNow = false;
-    }
-
-    if (!System.IO.File.Exists(vars.logPath))
-    {
-        vars.logPath = vars.ResolveActiveLog();
-        if (!System.IO.File.Exists(vars.logPath))
-            return;
-
-        try
-        {
-            vars.logPos = new System.IO.FileInfo(vars.logPath).Length;
-        }
-        catch
-        {
-            vars.logPos = 0L;
-        }
-        return;
-    }
-
-    long len = 0L;
-    try
-    {
-        len = new System.IO.FileInfo(vars.logPath).Length;
-    }
-    catch
-    {
-        return;
-    }
-
-    if (len < vars.logPos)
-        vars.logPos = len;
-
-    int linesRead = 0;
-    try
-    {
-        using (var fs = new System.IO.FileStream(vars.logPath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
-        {
-            fs.Seek(vars.logPos, System.IO.SeekOrigin.Begin);
-            using (var sr = new System.IO.StreamReader(fs))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    linesRead++;
-                    vars.lineCounter++;
-
-                    if (vars.armPressureLines > 0) vars.armPressureLines--;
-                    if (vars.armThanksLines > 0) vars.armThanksLines--;
-                    
-                    if (vars.pendingStrongInteract && (vars.lineCounter - vars.lastInteractLineCounter > 8))
-                        vars.pendingStrongInteract = false;
-
-                    if (line.IndexOf("Browse Started Browse:", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
-                        line.IndexOf("/Game/Maps/L_ClientLobby", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        vars.isInMainMenu = true;
-                        vars.characterSelectOpen = false;
-                        vars.mode = "Survival";
-                        vars.pendingStrongInteract = false;
-                        vars.armPressureLines = 0;
-                        vars.armThanksLines = 0;
-                        vars.translateStage = 0;
-                        vars.translateEnterLine = 0L;
-                        vars.translateOxygenLine = 0L;
-                        vars.ClearAscendPause();
-                        if (line.IndexOf("MenuReturnReason=Quit", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                            vars.mainMenuQuitPulse = true;
-                    }
-
-                    if (line.IndexOf("Browse Started Browse:", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
-                        line.IndexOf("/Game/Maps/Main/L_Main", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        vars.isInMainMenu = false;
-                        vars.mode = "Survival";
-                        vars.translateStage = 0;
-                        vars.translateEnterLine = 0L;
-                        vars.translateOxygenLine = 0L;
-                        if (line.IndexOf("game=Creative", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                            vars.mode = "Creative";
-                    }
-
-                    if (line.IndexOf("PushToLayer: Layer 5 Widget WBP_CharacterSelectScreen", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                        vars.characterSelectOpen = true;
-
-                    if (line.IndexOf("Pop: Layer 5 Widget WBP_CharacterSelectScreen", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        if (vars.characterSelectOpen)
-                            vars.creativeStartPulse = true;
-                        vars.characterSelectOpen = false;
-                    }
-
-                    if (line.IndexOf("UUWEFirstPersonCamera::EndCinematicLocation", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                        vars.survivalStartPulse = true;
-
-                    if ((line.IndexOf("LogUWEGameplay: Adding global tag Gamestate.LifepodAscending", System.StringComparison.OrdinalIgnoreCase) >= 0
-                        || line.IndexOf("DA_Player_Ch1_LifepodRide1_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0))
-                    {
-                        vars.lifepodAscendPulse = true;
-                    }
-
-                    if (line.IndexOf("LogUWEGameplay: Adding global tag Gamestate.LifepodAscending", System.StringComparison.OrdinalIgnoreCase) >= 0
-                        && !vars.igtPauseForAscend
-                        && !vars.ascendPauseConsumed
-                        && !vars.isInMainMenu)
-                    {
-                        vars.igtPauseForAscend = true;
-                        vars.lifepodAscendPauseStartUtc = System.DateTime.UtcNow;
-                        vars.ascendPauseConsumed = true;
-                    }
-
-                    if (line.IndexOf("DA_Storygoal_Player_Ch1_AdaptationTutorial2", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                        vars.armPressureLines = 220;
-
-                    if (vars.IsInteractPress(line))
-                    {
-                        vars.lastInteractLineCounter = vars.lineCounter;
-                        vars.pendingStrongInteract = true;
-                    }
-
-                    if (line.IndexOf("RemoveCurrentMappingContext: IMC_PlayerCharacter", System.StringComparison.OrdinalIgnoreCase) >= 0
-                        && vars.pendingStrongInteract
-                        && (vars.lineCounter - vars.lastInteractLineCounter <= 8))
-                    {
-                        vars.pendingStrongInteract = false;
-                        if (vars.armPressureLines > 0)
-                        {
-                            vars.pressureAdaptationPulse = true;
-                            vars.armPressureLines = 0;
-                        }
-                    }
-
-                    if (line.IndexOf("DA_Storygoal_Player_Ch1_AdaptationTutorial_Interact", System.StringComparison.OrdinalIgnoreCase) >= 0
-                        && !vars.firedPressureAdaptation)
-                    {
-                        vars.pressureAdaptationPulse = true;
-                    }
-
-                    if ((line.IndexOf("DA_Adaptation_Digestion_Acquired_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0
-                        || line.IndexOf("DA_Adaptation_Digestive_Acquired_1_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0))
-                    {
-                        vars.digestionAdaptationPulse = true;
-                    }
-
-                    if (line.IndexOf("DA_Adaptation_HeatResistance_Acquired_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                        vars.heatAdaptationPulse = true;
-
-                    if ((line.IndexOf("DA_Adaptation_AxumGlyphs_Acquired_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0
-                        || line.IndexOf("DA_Ruins_AxumGlyph_DB_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0))
-                    {
-                        vars.axumVisionAdaptationPulse = true;
-                    }
-
-                    if (line.IndexOf("DA_Observatory2_Enter_StoryGoal", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        vars.translateStage = 1;
-                        vars.translateEnterLine = vars.lineCounter;
-                        vars.translateOxygenLine = 0L;
-                    }
-
-                    if (vars.translateStage == 1
-                        && line.IndexOf("voiceover_PDA_2D/Observatory2_OxygenatedWater", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        vars.translateStage = 2;
-                        vars.translateOxygenLine = vars.lineCounter;
-                    }
-
-                    if (vars.translateStage == 2
-                        && vars.translateEnterLine > 0
-                        && vars.translateOxygenLine > 0
-                        && vars.translateOxygenLine > vars.translateEnterLine
-                        && vars.lineCounter > vars.translateOxygenLine
-                        && line.IndexOf("AbilityInput: AbilityPressed GA_Interact_C_", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        vars.translateMessagePulse = true;
-                        vars.translateStage = 0;
-                        vars.translateEnterLine = 0L;
-                        vars.translateOxygenLine = 0L;
-                    }
-
-                    if (vars.translateStage == 2
-                        && line.IndexOf("voiceover_PDA_2D/ClimateLab_AnalyzingMessage_Line3", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        vars.armThanksLines = 5000;
-                    }
-
-                    if (vars.translateStage == 2
-                        && vars.armThanksLines > 0
-                        && line.IndexOf("LogUIActionRouter: Display: Applying input config for leaf-most node [WBP_PlayerModalMessage_C_", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        vars.thanksForPlayingPulse = true;
-                        vars.armThanksLines = 0;
-                    }
-
-                    var mc = vars.rxCraftSucceed.Match(line);
-                    if (mc.Success)
-                    {
-                        string recipe = vars.Normalize(mc.Groups[1].Value);
-                        if (recipe == vars.Normalize("DA_MediumAirTankRecipe"))
-                            vars.highCapacityO2TankPulse = true;
-                        else if (recipe == vars.Normalize("DA_SonicResonatorV2Recipe"))
-                            vars.feedbackResonatorPulse = true;
-                        else if (recipe == vars.Normalize("DA_ScannerV2Recipe"))
-                            vars.bioscannerPulse = true;
-                        else if (recipe == vars.Normalize("DA_BuilderToolRecipe"))
-                            vars.habitatBuilderPulse = true;
-                    }
-                }
-            }
-
-            vars.logPos = fs.Position;
-        }
-    }
-    catch
-    {
-    }
-
-    if (linesRead > 0)
-    {
-        vars.staleFrames = 0;
-    }
-    else
-    {
-        vars.staleFrames++;
-        if (vars.staleFrames > 15)
-        {
-            vars.staleFrames = 0;
-            string candidate = vars.ResolveActiveLog();
-            if (!string.Equals(candidate, vars.logPath, System.StringComparison.OrdinalIgnoreCase))
-            {
-                vars.logPath = candidate;
-                try
-                {
-                    vars.logPos = System.IO.File.Exists(vars.logPath) ? new System.IO.FileInfo(vars.logPath).Length : 0L;
-                }
-                catch
-                {
-                    vars.logPos = 0L;
-                }
-            }
-        }
-    }
-
-    if (settings["reset_on_main_menu"] && vars.mainMenuQuitPulse)
-    {
-        try
-        {
-            if ((int)timer.CurrentPhase != 0)
-                vars.resetNow = true;
-        }
-        catch
-        {
-        }
-    }
-
-    if (!runActiveNow)
-        return;
-
-    if (settings["split_lifepod_ascend"] && vars.lifepodAscendPulse && !vars.firedLifepodAscend)
-    {
-        vars.firedLifepodAscend = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_pressure_adaptation"] && vars.pressureAdaptationPulse && !vars.firedPressureAdaptation)
-    {
-        vars.firedPressureAdaptation = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_digestions_adaptation"] && vars.digestionAdaptationPulse && !vars.firedDigestionAdaptation)
-    {
-        vars.firedDigestionAdaptation = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_heat_adaptation"] && vars.heatAdaptationPulse && !vars.firedHeatAdaptation)
-    {
-        vars.firedHeatAdaptation = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_axum_vision_adaptation"] && vars.axumVisionAdaptationPulse && !vars.firedAxumVisionAdaptation)
-    {
-        vars.firedAxumVisionAdaptation = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_high_capacity_o2_tank"] && vars.highCapacityO2TankPulse && !vars.firedHighCapacityO2Tank)
-    {
-        vars.firedHighCapacityO2Tank = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_feedback_resonator"] && vars.feedbackResonatorPulse && !vars.firedFeedbackResonator)
-    {
-        vars.firedFeedbackResonator = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_bioscanner"] && vars.bioscannerPulse && !vars.firedBioscanner)
-    {
-        vars.firedBioscanner = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_habitat_builder"] && vars.habitatBuilderPulse && !vars.firedHabitatBuilder)
-    {
-        vars.firedHabitatBuilder = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_translate_message"] && vars.translateMessagePulse && !vars.firedTranslateMessage)
-    {
-        vars.firedTranslateMessage = true;
-        vars.splitNow = true;
-        return;
-    }
-    if (settings["split_thanks_for_playing"] && vars.thanksForPlayingPulse && !vars.firedThanksForPlaying)
-    {
-        vars.firedThanksForPlaying = true;
-        vars.splitNow = true;
-        return;
-    }
-}
-
+// Start Checks
 start
 {
-    try
-    {
-        if ((int)timer.CurrentPhase != 0)
-            return false;
-    }
-    catch
-    {
-    }
+    if (vars.Resolver.CheckFlag("SurvivalStart")) return true;
+    if (vars.Resolver.CheckFlag("CreativeStart")) return true;
 
-    if (vars.startedThisAttempt)
-        return false;
-    if (vars.isInMainMenu)
-        return false;
-
-    if (settings["survival_start"] && vars.mode != "Creative" && vars.survivalStartPulse)
-    {
-        vars.startedThisAttempt = true;
-        return true;
-    }
-
-    if (settings["creative_start"] && vars.mode == "Creative" && vars.creativeStartPulse)
-    {
-        vars.startedThisAttempt = true;
-        return true;
-    }
-
-    return false;
 }
+// Update Checks
+update
+{
+    vars.Uhara.Update();
 
+// Updating for Load Removal Checks
+    if (vars.Resolver.CheckFlag("LifepodAscend"))
+        vars.introCutsceneLoadRemovalActive = true;
+
+    if (vars.Resolver.CheckFlag("IntroCutsceneLoadRemovalEnd"))
+        vars.introCutsceneLoadRemovalActive = false;
+}
+// Split Checks
 split
 {
-    try
-    {
-        if ((int)timer.CurrentPhase != 1)
-        {
-            vars.splitNow = false;
-            return false;
-        }
-    }
-    catch
-    {
-    }
-
-    bool fire = vars.splitNow;
-    vars.splitNow = false;
-    return fire;
+    if (vars.Resolver.CheckFlag("Adaptation") && settings["AdaptationSplits"]) return true;
+    if (vars.Resolver.CheckFlag("End") && settings["End"]) return true;
+    if (vars.Resolver.CheckFlag("LifepodAscend") && settings["LifepodAscend"]) return true;
 }
-
+// Reset Checks
 reset
 {
-    if (!vars.resetNow)
-        return false;
-    vars.resetNow = false;
-    return true;
+    if (vars.Resolver.CheckFlag("ResetOnMainMenu") && settings["ResetOnMainMenu"])
+    {
+        vars.introCutsceneLoadRemovalActive = false;
+        return true;
+    }
 }
-
+// Listening to Update for load Removal
 isLoading
 {
-    vars.TryEndAscendPause();
-    return vars.igtPauseForAscend;
-}
-
-onStart
-{
-    vars.startedThisAttempt = true;
-    vars.firedLifepodAscend = false;
-    vars.firedPressureAdaptation = false;
-    vars.firedDigestionAdaptation = false;
-    vars.firedHeatAdaptation = false;
-    vars.firedAxumVisionAdaptation = false;
-    vars.firedHighCapacityO2Tank = false;
-    vars.firedFeedbackResonator = false;
-    vars.firedBioscanner = false;
-    vars.firedHabitatBuilder = false;
-    vars.firedTranslateMessage = false;
-    vars.firedThanksForPlaying = false;
-    vars.translateStage = 0;
-    vars.armThanksLines = 0;
-    vars.translateEnterLine = 0L;
-    vars.translateOxygenLine = 0L;
-    vars.ClearAscendPause();
-}
-
-onReset
-{
-    vars.startedThisAttempt = false;
-
-    vars.firedLifepodAscend = false;
-    vars.firedPressureAdaptation = false;
-    vars.firedDigestionAdaptation = false;
-    vars.firedHeatAdaptation = false;
-    vars.firedAxumVisionAdaptation = false;
-    vars.firedHighCapacityO2Tank = false;
-    vars.firedFeedbackResonator = false;
-    vars.firedBioscanner = false;
-    vars.firedHabitatBuilder = false;
-    vars.firedTranslateMessage = false;
-    vars.firedThanksForPlaying = false;
-
-    vars.splitNow = false;
-    vars.resetNow = false;
-    vars.pendingStrongInteract = false;
-    vars.armPressureLines = 0;
-    vars.armThanksLines = 0;
-    vars.translateStage = 0;
-    vars.translateEnterLine = 0L;
-    vars.translateOxygenLine = 0L;
-    vars.ClearAscendPause();
-
-    try
-    {
-        vars.logPath = vars.ResolveActiveLog();
-        vars.logPos = System.IO.File.Exists(vars.logPath) ? new System.IO.FileInfo(vars.logPath).Length : 0L;
-    }
-    catch
-    {
-        vars.logPos = 0L;
-    }
+    return vars.introCutsceneLoadRemovalActive;
 }

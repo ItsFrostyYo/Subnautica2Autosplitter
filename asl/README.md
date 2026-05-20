@@ -1,92 +1,27 @@
-\# Subnautica2.asl (Log-Based)
+# Subnautica 2 Autosplitter (Uhara-Memory Based)
 
+This contains the smaller **LiveSplit Component** version of the Subnautica 2 (Early Access) autosplitter.
 
+- `asl/Subnautica2.asl`
 
-This contains the \*\*Scriptable Auto Splitter\*\* version of the Subnautica 2 (Early Access) Autosplitter for LiveSplit:
+## What this version includes
 
+### Start / Reset
 
+- `Survival Start` Starts when you Gain Control in a new Survival run.
+- `Creative Start` Starts when you Gain Control in a new Creative run.
+- `Reset on Main Menu` Reset's when you load the main menu (specifically when the game starts contruct of the main menu)
 
-\- `Subnautica2.asl`
+### Splits:
 
+- `Adaptations` - Splits when you interact with an Adaptation.
+- `Translate Message` Splits on Button Press for triggering the translation for the alien axum messages before `Thanks for 
+- `Lifepod Ascend` Splits when you specifically launch the ascent of the lifepod at the start of the game.
 
+### In-Game Time
 
-\## What This Version Includes
+When comparing against Game Time, lifepod ascend cutscene time is removed until you gain control again (usually exactly `85 seconds`)
 
+## License
 
-
-\### Start/Reset:
-
-
-
-\- `Survival Start` Starts when you first Gain Control in new Survival Mode saves.
-
-\- `Creative Start` Starts when you first Gain Control in new Creative Mode saves.
-
-\- `Reset on Main Menu` - Reset when you Quit to Main Menu.
-
-
-
-\### Splits:
-
-
-
-\- `Adaptations` - Splits when you unlock specific Adapation.
-
-&#x20; - `Pressure Adaptation`
-
-&#x20; - `Digestion Adaptation`
-
-&#x20; - `Heat Resistance Adaptation`
-
-&#x20; - `Axum Vision Adaptation`
-
-\- `Crafts` Splits when you craft a Certain Item.
-
-&#x20; - `High capacity O2 Tank`
-
-&#x20; - `Bioscanner`
-
-&#x20; - `Feedback Resonator`
-
-&#x20; - `Habitat Builder`
-
-\- `End Game Triggers` Splits on Specific End Triggers.
-
-&#x20; - `Translate Message` Splits on Button Press for triggering the translation for the alien axum messages before `Thanks for Playing`.
-
-&#x20; - `Thanks for Playing` Splits on the "Thanks for Playing" Popup.
-
-\- `Other Splits` Other specific Splits.
-
-&#x20; - `Lifepod Ascend` Splits when you specifically launch the ascent of the lifepod at the start of the game.
-
-
-
-\### In-Game Time:
-
-
-
-When comparing against Game Time on Livesplit it will remove the Lifepod Ascending Cutscene Time, which is Exactly `85 Seconds`.
-
-
-
-\## Notes
-
-
-
-\- This is a \*\*log-based\*\* autosplitter (not memory-based).
-
-\- Logs are read from:
-
-\- `%LOCALAPPDATA%\\Subnautica2\\Saved\\Logs`
-
-\- `Translate Message` autosplit can sometimes split incorrectly if you dont restart the game to start new logs after a completion
-
-
-
-\## License
-
-
-
-This project is licensed under the MIT License. See \[LICENSE](./LICENSE).
-
+MIT License. See [LICENSE](./LICENSE).
