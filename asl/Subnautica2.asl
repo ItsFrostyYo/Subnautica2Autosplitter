@@ -17,6 +17,9 @@ startup
         // Where the Grouped Splits listed are
         { "AdaptationSplits", false, "Adaptation Splits", "group_splits" },
 	    { "LifepodAscend", false, "Lifepod Ascend", "group_splits" },
+        { "CraftHighCapacityTank", false, "Craft - High Capcity O2 Tank", "group_splits" },
+        { "CraftFeedbackResonator", false, "Craft - Feedback Resonator", "group_splits" },
+        { "CraftBioscanner", false, "Craft - Bioscanner", "group_splits" },
         { "End", true, "End Split", "group_splits" },
     };
     // Creates Settings
@@ -41,6 +44,9 @@ init
     // Split Event Listeners
     vars.Events.FunctionFlag("Adaptation", "BP_AngelCombCore_Ripple_NotifyState_C", "BP_AngelCombCore_Ripple_NotifyState_C", "Received_NotifyBegin");
     vars.Events.FunctionFlag("LifepodAscend", "BP_NarrativeSignal_C", "BP_NarrativeSignal_C_UAID_60CF846429E036A502", "OnUnlocked_62920D1448BD71509596E5B554437304");
+    vars.Events.FunctionFlag("CraftHighCapacityTank", "BP_OxygenTank_Medium_C", "BP_OxygenTank_Medium_C", "BPOnEquipped");
+    vars.Events.FunctionFlag("CraftFeedbackResonator", "BP_SonicResonatorV2_C", "BP_SonicResonatorV2_C", "ItemPickedUp");
+    vars.Events.FunctionFlag("CraftBioscanner", "BP_ScannerV2_C", "BP_ScannerV2_C", "ExecuteUbergraph_BP_Scanner");
     vars.Events.FunctionFlag("End", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
     // Reset/Load Removal Event Listeners
     vars.Events.FunctionFlag("ResetOnMainMenu", "WBP_MainLobbyScreen_C", "WBP_MainLobbyScreen_C", "Construct");
@@ -71,8 +77,11 @@ update
 split
 {
     if (vars.Resolver.CheckFlag("Adaptation") && settings["AdaptationSplits"]) return true;
-    if (vars.Resolver.CheckFlag("End") && settings["End"]) return true;
     if (vars.Resolver.CheckFlag("LifepodAscend") && settings["LifepodAscend"]) return true;
+    if (vars.Resolver.CheckFlag("CraftHighCapacityTank") && settings["CraftHighCapacityTank"]) return true;
+    if (vars.Resolver.CheckFlag("CraftFeedbackResonator") && settings["CraftFeedbackResonator"]) return true;
+    if (vars.Resolver.CheckFlag("CraftBioscanner") && settings["CraftBioscanner"]) return true;
+    if (vars.Resolver.CheckFlag("End") && settings["End"]) return true;
 }
 // Reset Checks
 reset
@@ -82,6 +91,11 @@ reset
         vars.introCutsceneLoadRemovalActive = false;
         return true;
     }
+}
+
+onReset
+{
+    vars.introCutsceneLoadRemovalActive = false;
 }
 // Listening to Update for load Removal
 isLoading

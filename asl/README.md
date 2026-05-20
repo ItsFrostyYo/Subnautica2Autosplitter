@@ -1,6 +1,6 @@
 # Subnautica 2 Autosplitter (Uhara-Memory Based)
 
-This contains the smaller **LiveSplit Component** version of the Subnautica 2 (Early Access) autosplitter.
+This contains the **Uhara-Memory Based** **.asl** version of the Subnautica 2 (Early Access) autosplitter.
 
 - `asl/Subnautica2.asl`
 
@@ -15,8 +15,11 @@ This contains the smaller **LiveSplit Component** version of the Subnautica 2 (E
 ### Splits
 
 - `Adaptations` - Splits when you interact with an Adaptation.
-- `Translate Message` Splits on Button Press for triggering the translation for the alien axum messages before `Thanks for Playing`
 - `Lifepod Ascend` Splits when you specifically launch the ascent of the lifepod at the start of the game.
+- `Craft High Capacity Tank` Splits when you Craft a High Capacity O2 Tank (Specifically when its obtained in the inventory after)
+- `Craft Feedback Resonator` Splits when you Craft a Feedback Resonator (Specifically when its obtained in the inventory after)
+- `Craft Bioscanner` Splits when you Craft the Bioscanner for the first time (Specifically when you trigger the state of the bioscanner for the first time, typically when its first obtained)
+- `Translate Message` Splits on Button Press for triggering the translation for the alien axum messages before `Thanks for Playing`
 
 ### In-Game Time
 
