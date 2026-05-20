@@ -1,19 +1,7 @@
-Component/bin/
-Component/obj/
-
-# Prevent accidental root clutter from local LiveSplit copies
-/*.dll
-/*.pdb
-/*.dll.config
-/*.exe.config
-
-/Artifacts
-/Components
-/Component
-/Memory Reading Version
-
-# Keep published component binaries folder
-!/Components/
-!/Components/*.dll
-!/Components/*.pdb
-!/Components/*.xml
+# Track only the ASL and basic repo docs.
+*
+!/.gitignore
+!/LICENSE
+!/README.md
+!/asl/
+!/asl/**
