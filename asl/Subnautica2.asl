@@ -27,7 +27,7 @@ startup
         { "CraftFeedbackResonator", false, "Craft Feedback Resonator", "Any%Group" },
         { "CraftBioscanner", false, "Craft Bioscanner", "Any%Group" },
         { "CraftScannerSplit", false, "Craft Scanner", "Any%Group" },
-        { "EndObservatoryButtonPress", false, "Observatory Button", "Any%Group" },
+        { "EndObservatoryButtonPress", true, "Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
         { "MiscellaneousSplitsGroup", false, "Miscellaneous Splits", null },
