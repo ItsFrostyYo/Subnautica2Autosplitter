@@ -43,8 +43,8 @@ startup
         { "EndObservatoryButtonPress", true, "Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
-        { "MiscellaneousSplitsGroup", false, "Miscellaneous Splits", null },
-        { "CraftingSplits", false, "Crafting Splits", "MiscellaneousSplitsGroup" },
+        { "MiscellaneousSplitsGroup", true, "Miscellaneous Splits", null },
+        { "CraftingSplits", true, "Crafting Splits", "MiscellaneousSplitsGroup" },
         { "FirstCraft", false, "Split on First Craft", "CraftingSplits" },
         // Other in th Future
         // { "Nothing1", false, "More Coming in the Future", "MiscellaneousSplitsGroup" },
