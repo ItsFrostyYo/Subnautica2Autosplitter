@@ -37,7 +37,7 @@ init
     if (vars.Utils.GEngine != IntPtr.Zero) vars.Uhara.Log("GEngine found at " + vars.Utils.GEngine.ToString("X"));
     if (vars.Utils.GWorld != IntPtr.Zero) vars.Uhara.Log("GWorld found at " + vars.Utils.GWorld.ToString("X")); 
     if (vars.Utils.FNames != IntPtr.Zero) vars.Uhara.Log("FNames found at " + vars.Utils.FNames.ToString("X"));
-    vars.Resolver.Watch<bool>("GSync", vars.Utils.GSync);
+    // vars.Resolver.Watch<bool>("GSync", vars.Utils.GSync);
     
     // Start Event Listeners
     vars.Events.FunctionFlag("SurvivalStart","BPC_SN2SyncedAnimation_C", "BPC_SN2SyncedAnimation", "OnInterrupted_6CE57B834482AC68669FA3BD7C032291");
@@ -101,5 +101,6 @@ onReset
 // Listening to Update for load Removal
 isLoading
 {
-    return vars.introCutsceneLoadRemovalActive || current.GSync;
+    return vars.introCutsceneLoadRemovalActive
+    // return vars.introCutsceneLoadRemovalActive || current.GSync;
 }
