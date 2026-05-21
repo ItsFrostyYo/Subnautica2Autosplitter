@@ -26,7 +26,7 @@ startup
         { "CraftHighCapacityTank", false, "Craft High Capacity O2 Tank", "Any%Group" },
         { "CraftFeedbackResonator", false, "Craft Feedback Resonator", "Any%Group" },
         { "CraftBioscanner", false, "Craft Bioscanner", "Any%Group" },
-        { "CraftScannerSplit", false, "Craft Scanner", "Any%Group" },
+        // { "CraftScannerSplit", false, "Craft Scanner", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
@@ -68,7 +68,7 @@ init
     vars.Events.FunctionFlag("CraftFeedbackResonator", "BP_SonicResonatorV2_C", "BP_SonicResonatorV2_C", "ItemPickedUp");
     vars.Events.FunctionFlag("CraftBioscanner", "BP_ScannerV2_C", "BP_ScannerV2_C", "ExecuteUbergraph_BP_Scanner");
     vars.Events.FunctionFlag("EndObservatoryButtonPress", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
-    vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "Equipped");
+    // vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "Equipped");
     // Load Removal Event Listeners
     vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
 
@@ -106,7 +106,7 @@ split
     if (vars.Resolver.CheckFlag("CraftFeedbackResonator") && settings["CraftFeedbackResonator"]) return true;
     if (vars.Resolver.CheckFlag("CraftBioscanner") && settings["CraftBioscanner"]) return true;
     if (vars.Resolver.CheckFlag("EndObservatoryButtonPress") && settings["EndObservatoryButtonPress"]) return true;
-    if (vars.Resolver.CheckFlag("CraftScannerSplit") && settings["CraftScannerSplit"]) return true;
+    // if (vars.Resolver.CheckFlag("CraftScannerSplit") && settings["CraftScannerSplit"]) return true;
 }
 // Reset Checks
 reset
