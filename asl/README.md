@@ -18,17 +18,29 @@ Enabling `Start` at the top allows you to have these 2 starts enabled
 Having `Reset` Enabled allows the timer to reset, and allows this setting below to work,
 
 - `Reset on Main Menu` Reset's when you load the main menu (specifically when the game starts construct of the main menu)
+- `Reset on New Game Start (Survival)` Reset's when you start a new Survival game.
+- `Reset on New Game Start (Creative)` Reset's when you start a new Creative game.
 
 ### Splits
 
-In the Splits Grouping you can enable any of these to trigger a split automatically,
+In the `Any%` grouping you can enable any of these to trigger a split automatically,
 
-- `Adaptations` Splits when you interact with an Adaptation/Angel Comb.
+- `Any Adaptations` Splits when you interact with an Adaptation/Angel Comb.
 - `Lifepod Ascend` Splits when you specifically launch the ascent of the lifepod at the start of the game.
-- `Craft High Capacity Tank` Splits when you Craft a High Capacity O2 Tank (Specifically when its obtained in the inventory after)
-- `Craft Feedback Resonator` Splits when you Craft a Feedback Resonator (Specifically when its obtained in the inventory after)
-- `Craft Bioscanner` Splits when you Craft the Bioscanner for the first time (Specifically when you trigger the state of the bioscanner for the first time, typically when its first obtained)
-- `Translate Message` Splits on Button Press for triggering the translation for the alien axum messages before `Thanks for Playing`
+- `Button Press` Splits on the intro scanning button press.
+- `Lifepod Left Lever Pressed` Splits when the left lifepod lever is pressed.
+- `Lifepod Right Lever Pressed` Splits when the right lifepod lever is pressed.
+- `Craft High Capacity O2 Tank` Splits when you craft and obtain the High Capacity O2 Tank.
+- `Craft Feedback Resonator` Splits when you craft and obtain the Feedback Resonator.
+- `Craft Bioscanner` Splits when you craft and obtain the Bioscanner.
+- `Craft Scanner` Splits when the Scanner equip event is triggered.
+- `Biomod Station Close` Splits when the Biomod Station UI closes.
+- `Observatory Button` Splits on the end Observatory button press.
+
+In the `Other Splits (Miscellaneous)` grouping you can also enable,
+
+- `Biomod Equip` Splits when a passive biomod is selected.
+- `Biomod Unequip` Splits when a passive biomod is deselected.
 
 ### In-Game Time
 
