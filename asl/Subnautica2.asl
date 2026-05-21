@@ -6,6 +6,19 @@ startup
     vars.Uhara.AlertLoadless(); // Sends Alert for using Game Time for Load Removal
 
     vars.introCutsceneLoadRemovalActive = false;
+    vars.CompletedCraftSplits = new HashSet<string>();
+
+    vars.DoCraftSplit = (Func<string, bool>)((key) =>
+    {
+        if (vars.CompletedCraftSplits.Contains(key)) return false;
+        vars.CompletedCraftSplits.Add(key);
+        return true;
+    });
+
+    vars.ResetCraftSplits = (Action)(() =>
+    {
+        vars.CompletedCraftSplits.Clear();
+    });
 
     dynamic[,] _settings =
     {
@@ -26,7 +39,7 @@ startup
         { "CraftHighCapacityTank", false, "Craft High Capacity O2 Tank", "Any%Group" },
         { "CraftFeedbackResonator", false, "Craft Feedback Resonator", "Any%Group" },
         { "CraftBioscanner", false, "Craft Bioscanner", "Any%Group" },
-        // { "CraftScannerSplit", false, "Craft Scanner", "Any%Group" },
+        { "CraftScannerSplit", false, "Craft Scanner", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
@@ -68,7 +81,7 @@ init
     vars.Events.FunctionFlag("CraftFeedbackResonator", "BP_SonicResonatorV2_C", "BP_SonicResonatorV2_C", "ItemPickedUp");
     vars.Events.FunctionFlag("CraftBioscanner", "BP_ScannerV2_C", "BP_ScannerV2_C", "ExecuteUbergraph_BP_Scanner");
     vars.Events.FunctionFlag("EndObservatoryButtonPress", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
-    // vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "Equipped");
+    vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "Equipped");
     // Load Removal Event Listeners
     vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
 
@@ -77,8 +90,18 @@ init
 // Start Checks
 start
 {
-    if (vars.Resolver.CheckFlag("SurvivalStart")) return true;
-    if (vars.Resolver.CheckFlag("CreativeStart")) return true;
+    if (vars.Resolver.CheckFlag("SurvivalStart"))
+    {
+        vars.introCutsceneLoadRemovalActive = false;
+        vars.ResetCraftSplits();
+        return true;
+    }
+    if (vars.Resolver.CheckFlag("CreativeStart"))
+    {
+        vars.introCutsceneLoadRemovalActive = false;
+        vars.ResetCraftSplits();
+        return true;
+    }
 
 }
 // Update Checks
@@ -102,11 +125,16 @@ split
     if (vars.Resolver.CheckFlag("IntroButtonPress") && settings["IntroButtonPress"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodLeftLeverPressed") && settings["IntroLifepodLeftLeverPressed"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodRightLeverPressed") && settings["IntroLifepodRightLeverPressed"]) return true;
-    if (vars.Resolver.CheckFlag("CraftHighCapacityTank") && settings["CraftHighCapacityTank"]) return true;
-    if (vars.Resolver.CheckFlag("CraftFeedbackResonator") && settings["CraftFeedbackResonator"]) return true;
-    if (vars.Resolver.CheckFlag("CraftBioscanner") && settings["CraftBioscanner"]) return true;
+    if (vars.Resolver.CheckFlag("CraftHighCapacityTank") && settings["CraftHighCapacityTank"] && vars.DoCraftSplit("CraftHighCapacityTank")) return true;
+    if (vars.Resolver.CheckFlag("CraftFeedbackResonator") && settings["CraftFeedbackResonator"] && vars.DoCraftSplit("CraftFeedbackResonator")) return true;
+    if (vars.Resolver.CheckFlag("CraftBioscanner") && settings["CraftBioscanner"] && vars.DoCraftSplit("CraftBioscanner")) return true;
     if (vars.Resolver.CheckFlag("EndObservatoryButtonPress") && settings["EndObservatoryButtonPress"]) return true;
-    // if (vars.Resolver.CheckFlag("CraftScannerSplit") && settings["CraftScannerSplit"]) return true;
+    if (vars.Resolver.CheckFlag("CraftScannerSplit") && settings["CraftScannerSplit"] && vars.DoCraftSplit("CraftScannerSplit")) return true;
+}
+onStart
+{
+    vars.ResetCraftSplits();
+    vars.introCutsceneLoadRemovalActive = false;
 }
 // Reset Checks
 reset
@@ -114,16 +142,19 @@ reset
     if (vars.Resolver.CheckFlag("ResetOnMainMenu") && settings["ResetOnMainMenu"])
     {
         vars.introCutsceneLoadRemovalActive = false;
+        vars.ResetCraftSplits();
         return true;
     }
     if (vars.Resolver.CheckFlag("ResetOnNewGameSurvival") && settings["ResetOnNewGameSurvival"])
     {
         vars.introCutsceneLoadRemovalActive = false;
+        vars.ResetCraftSplits();
         return true;
     }
     if (vars.Resolver.CheckFlag("ResetOnNewGameCreative") && settings["ResetOnNewGameCreative"])
     {
         vars.introCutsceneLoadRemovalActive = false;
+        vars.ResetCraftSplits();
         return true;
     }
 }
@@ -131,6 +162,7 @@ reset
 onReset
 {
     vars.introCutsceneLoadRemovalActive = false;
+    vars.ResetCraftSplits();
 }
 // Listening to Update for load Removal
 isLoading
