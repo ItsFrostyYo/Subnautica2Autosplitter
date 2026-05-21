@@ -40,12 +40,14 @@ startup
         { "CraftFeedbackResonator", false, "Craft Feedback Resonator", "Any%Group" },
         { "CraftBioscanner", false, "Craft Bioscanner", "Any%Group" },
         { "CraftScannerSplit", false, "Craft Scanner", "Any%Group" },
-		{ "FirstCraft", false, "FirstCraft", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
         { "MiscellaneousSplitsGroup", false, "Miscellaneous Splits", null },
-        { "Nothing1", false, "More Coming in the Future", "MiscellaneousSplitsGroup" },
+        { "CraftingSplits", false, "Crafting Splits", "MiscellaneousSplitsGroup" },
+        { "FirstCraft", false, "Split on First Craft", "CraftingSplits" },
+        // Other in th Future
+        // { "Nothing1", false, "More Coming in the Future", "MiscellaneousSplitsGroup" },
 
     };
     // Creates Settings
