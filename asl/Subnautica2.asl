@@ -2,6 +2,21 @@ state("Subnautica2-Win64-Shipping"){}
 
 startup
 {
+    vars.ScriptVersion = "v1.0.7";
+    vars.MissingUhara = !File.Exists("Components/uhara10");
+    if (vars.MissingUhara)
+    {
+        System.Windows.Forms.MessageBox.Show(
+            "Missing required file: Components/uhara10,\n" +
+            "Please Place uhara10 in your LiveSplit Components folder.\n" +
+            "https://github.com/ru-mii/uhara/raw/refs/heads/main/bin/uhara10",
+            "Subnautica 2 Autosplitter " + vars.ScriptVersion,
+            System.Windows.Forms.MessageBoxButtons.OK,
+            System.Windows.Forms.MessageBoxIcon.Error
+        );
+        return;
+    }
+
     Assembly.Load(File.ReadAllBytes("Components/uhara10")).CreateInstance("Main");
     vars.Uhara.AlertLoadless(); // Sends Alert for using Game Time for Load Removal
 
@@ -56,6 +71,8 @@ startup
 }
 init
 {
+    if (vars.MissingUhara) return;
+
     // Uhara Initalize
     vars.Utils = vars.Uhara.CreateTool("UnrealEngine", "Utils");
     vars.Events = vars.Uhara.CreateTool("UnrealEngine", "Events");
@@ -94,6 +111,8 @@ init
 // Start Checks
 start
 {
+    if (vars.MissingUhara) return false;
+
     if (vars.Resolver.CheckFlag("SurvivalStart"))
     {
         vars.introCutsceneLoadRemovalActive = false;
@@ -111,6 +130,8 @@ start
 // Update Checks
 update
 {
+    if (vars.MissingUhara) return;
+
     vars.Uhara.Update();
 
 // Updating for Load Removal Checks
@@ -123,6 +144,8 @@ update
 // Split Checks
 split
 {
+    if (vars.MissingUhara) return false;
+
     // Any% Splits
     if (vars.Resolver.CheckFlag("AdaptationSplit") && settings["AdaptationSplit"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodAscend") && settings["IntroLifepodAscend"]) return true;
@@ -138,12 +161,16 @@ split
 }
 onStart
 {
+    if (vars.MissingUhara) return;
+
     vars.ResetCraftSplits();
     vars.introCutsceneLoadRemovalActive = false;
 }
 // Reset Checks
 reset
 {
+    if (vars.MissingUhara) return false;
+
     if (vars.Resolver.CheckFlag("ResetOnMainMenu") && settings["ResetOnMainMenu"])
     {
         vars.introCutsceneLoadRemovalActive = false;
@@ -166,12 +193,16 @@ reset
 // Reset load removal on normal reset
 onReset
 {
+    if (vars.MissingUhara) return;
+
     vars.introCutsceneLoadRemovalActive = false;
     vars.ResetCraftSplits();
 }
 // Listening to Update for load Removal
 isLoading
 {
+    if (vars.MissingUhara) return false;
+
     return vars.introCutsceneLoadRemovalActive;
     // return vars.introCutsceneLoadRemovalActive || current.GSync; // Temporary Disable GSync
 }

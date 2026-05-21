@@ -34,13 +34,11 @@ In the `Any%` grouping you can enable any of these to trigger a split automatica
 - `Craft Feedback Resonator` Splits when you craft and obtain the Feedback Resonator.
 - `Craft Bioscanner` Splits when you craft and obtain the Bioscanner.
 - `Craft Scanner` Splits when the Scanner equip event is triggered.
-- `Biomod Station Close` Splits when the Biomod Station UI closes.
 - `Observatory Button` Splits on the end Observatory button press.
 
-In the `Other Splits (Miscellaneous)` grouping you can also enable,
+In the `Miscellaneous Splits` grouping you can also enable,
 
-- `Biomod Equip` Splits when a passive biomod is selected.
-- `Biomod Unequip` Splits when a passive biomod is deselected.
+- `Split on First Craft` Splits on the first craft event of the attempt.
 
 ### In-Game Time
 
