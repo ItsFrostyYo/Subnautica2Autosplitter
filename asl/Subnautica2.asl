@@ -84,13 +84,10 @@ init
     if (vars.Utils.FNames != IntPtr.Zero) vars.Uhara.Log("FNames found at " + vars.Utils.FNames.ToString("X"));
     // vars.Resolver.Watch<bool>("GSync", vars.Utils.GSync); // Temporary Disable GSync
     
-    // Start Event Listeners
+    // Start/Reset Event Listeners
     vars.Events.FunctionFlag("SurvivalStart","BPC_SN2SyncedAnimation_C", "BPC_SN2SyncedAnimation", "OnInterrupted_6CE57B834482AC68669FA3BD7C032291");
     vars.Events.FunctionFlag("CreativeStart", "BP_CreativeModePlayerStart_C", "BP_CreativeModePlayerStart_C_UAID_F02F74AC8D0CF16102", "OnStartConditionsApplied");
-    // Reset Event Listeners
     vars.Events.FunctionFlag("ResetOnMainMenu", "WBP_MainLobbyScreen_C", "WBP_MainLobbyScreen_C", "Construct");
-    vars.Events.FunctionFlag("ResetOnNewGameSurvival", "BP_DeepPlayerStart_C", "BP_DeepPlayerStart_C_UAID_548D5A201FC9C6FC01", "OnStoryGoalUnlocked_Event");
-    vars.Events.FunctionFlag("ResetOnNewGameCreative", "BP_CreativeModePlayerStart_C", "BP_CreativeModePlayerStart_C_UAID_F02F74AC8D0CF16102", "OnStartConditionsApplied");
     // Any% Event Listeners
     vars.Events.FunctionFlag("AdaptationSplit", "BP_AngelCombCore_Ripple_NotifyState_C", "BP_AngelCombCore_Ripple_NotifyState_C", "Received_NotifyBegin");
     vars.Events.FunctionFlag("IntroButtonPress", "BP_ScanningButton_C", "BP_ScanningButton_C_UAID_C87F54AE2B72FF0402", "BroadcastButtonPressed");
@@ -177,13 +174,13 @@ reset
         vars.ResetCraftSplits();
         return true;
     }
-    if (vars.Resolver.CheckFlag("ResetOnNewGameSurvival") && settings["ResetOnNewGameSurvival"])
+    if (vars.Resolver.CheckFlag("SurvivalStart") && settings["ResetOnNewGameSurvival"])
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
         return true;
     }
-    if (vars.Resolver.CheckFlag("ResetOnNewGameCreative") && settings["ResetOnNewGameCreative"])
+    if (vars.Resolver.CheckFlag("CreativeStart") && settings["ResetOnNewGameCreative"])
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
