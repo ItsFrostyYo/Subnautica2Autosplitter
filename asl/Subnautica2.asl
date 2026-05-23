@@ -41,8 +41,8 @@ startup
     {
         // Creative Start Grouping
         { "CreativeStartGroup", true, "Creative Start", null },
-        { "CreativeStartLoadIn", false, "Start on Load In (Priority)", "CreativeStartGroup" },
-        { "CreativeStartFirstInteractMovement", true, "Start on First Interact or Movement", "CreativeStartGroup" },
+        { "CreativeStartLoadIn", true, "Start on Load In (Priority)", "CreativeStartGroup" },
+        { "CreativeStartFirstInteractMovement", false, "Start on First Interact or Movement", "CreativeStartGroup" },
 
         // Reset Grouping
         { "ResetGroup", true, "Reset Types", null },
@@ -66,7 +66,7 @@ startup
 
         // Miscellaneous Splits Grouping
         { "MiscellaneousSplitsGroup", true, "Miscellaneous Splits", null },
-        { "CraftingSplits", true, "Crafting Splits", "MiscellaneousSplitsGroup" },
+        { "CraftingSplits", false, "Crafting Splits", "MiscellaneousSplitsGroup" },
         { "FirstCraft", false, "Split on First Craft", "CraftingSplits" },
         // Other in th Future
         // { "Nothing1", false, "More Coming in the Future", "MiscellaneousSplitsGroup" },
