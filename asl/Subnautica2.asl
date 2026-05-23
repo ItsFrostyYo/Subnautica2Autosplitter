@@ -1,4 +1,5 @@
 state("Subnautica2-Win64-Shipping"){}
+state("Subnautica2-WinGDK-Shipping"){}
 
 startup
 {
@@ -21,6 +22,7 @@ startup
     vars.Uhara.AlertLoadless(); // Sends Alert for using Game Time for Load Removal
 
     vars.introCutsceneLoadRemovalActive = false;
+    vars.creativeStartArmed = false;
     vars.CompletedCraftSplits = new HashSet<string>();
 
     vars.DoCraftSplit = (Func<string, bool>)((key) =>
@@ -86,8 +88,23 @@ init
     
     // Start/Reset Event Listeners
     vars.Events.FunctionFlag("SurvivalStart","BPC_SN2SyncedAnimation_C", "BPC_SN2SyncedAnimation", "OnInterrupted_6CE57B834482AC68669FA3BD7C032291");
-    vars.Events.FunctionFlag("CreativeStart", "BP_CreativeModePlayerStart_C", "BP_CreativeModePlayerStart_C_UAID_F02F74AC8D0CF16102", "OnStartConditionsApplied");
+    vars.Events.FunctionFlag("CreativeStartArm", "BP_CreativeModePlayerStart_C", "BP_CreativeModePlayerStart_C_UAID_F02F74AC8D0CF16102", "OnStartConditionsApplied");
     vars.Events.FunctionFlag("ResetOnMainMenu", "WBP_MainLobbyScreen_C", "WBP_MainLobbyScreen_C", "Construct");
+    // Creative Start Follow-Up Event Listeners
+    // Interact with Storage Start [BP_Character_01_C] [BP_Character_01_C] [OnInteractWithOtherInventory]
+    vars.Events.FunctionFlag("CreativeStartInteractWithStorage", "BP_Character_01_C", "BP_Character_01_C", "OnInteractWithOtherInventory");
+    // First Movement Start [GA_Walk_C] [GA_Walk_C] [OnStarted_CD32F07B44EEF144D8A18C86FCFC3E47]
+    vars.Events.FunctionFlag("CreativeStartFirstMovement", "GA_Walk_C", "GA_Walk_C", "OnStarted_CD32F07B44EEF144D8A18C86FCFC3E47");
+    // Interact with Fabricator Start [WBP_FabricatorScreen_C] [WBP_FabricatorScreen_C] [RecipeListEntriesRefreshed]
+    vars.Events.FunctionFlag("CreativeStartInteractWithFabricator", "WBP_FabricatorScreen_C", "WBP_FabricatorScreen_C", "RecipeListEntriesRefreshed");
+    // First Jump Start [BP_Character_01_C] [BP_Character_01_C] [OnJumped]
+    vars.Events.FunctionFlag("CreativeStartFirstJump", "BP_Character_01_C", "BP_Character_01_C", "OnJumped");
+    // Open PDA Start [WBP_Inventory_C] [WBP_Inventory_C] [ExecuteUbergraph_WBP_Inventory]
+    vars.Events.FunctionFlag("CreativeStartOpenPDA", "WBP_Inventory_C", "WBP_Inventory_C", "ExecuteUbergraph_WBP_Inventory");
+    // Interact with NoA Start [WBP_ComputerTextInterface_C] [WBP_ComputerTextInterface_C] [UpdateDialogueOptions]
+    vars.Events.FunctionFlag("CreativeStartInteractWithNoA", "WBP_ComputerTextInterface_C", "WBP_ComputerTextInterface_C", "UpdateDialogueOptions");
+    // First Swim Start [GA_Swim_C] [GA_Swim_C] [OnStarted_E7B4EFF4450EE32D27781F951D040059]
+    vars.Events.FunctionFlag("CreativeStartFirstSwim", "GA_Swim_C", "GA_Swim_C", "OnStarted_E7B4EFF4450EE32D27781F951D040059");
     // Any% Event Listeners
     vars.Events.FunctionFlag("AdaptationSplit", "BP_AngelCombCore_Ripple_NotifyState_C", "BP_AngelCombCore_Ripple_NotifyState_C", "Received_NotifyBegin");
     vars.Events.FunctionFlag("IntroButtonPress", "BP_ScanningButton_C", "BP_ScanningButton_C_UAID_C87F54AE2B72FF0402", "BroadcastButtonPressed");
@@ -104,6 +121,7 @@ init
     vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
 
     vars.introCutsceneLoadRemovalActive = false;
+    vars.creativeStartArmed = false;
 }
 // Start Checks
 start
@@ -114,14 +132,36 @@ start
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.creativeStartArmed = false;
         return true;
     }
-    if (vars.Resolver.CheckFlag("CreativeStart"))
-    {
-        vars.introCutsceneLoadRemovalActive = false;
-        vars.ResetCraftSplits();
-        return true;
-    }
+    
+    if (vars.Resolver.CheckFlag("CreativeStartArm"))
+{
+    vars.introCutsceneLoadRemovalActive = false;
+    vars.ResetCraftSplits();
+    vars.creativeStartArmed = false;
+    return true;
+}
+
+    // if (vars.Resolver.CheckFlag("CreativeStartArm"))
+    //     vars.creativeStartArmed = true;
+
+    // if (vars.creativeStartArmed && (
+    //     vars.Resolver.CheckFlag("CreativeStartInteractWithStorage") ||
+    //    vars.Resolver.CheckFlag("CreativeStartFirstMovement") ||
+    //    vars.Resolver.CheckFlag("CreativeStartInteractWithFabricator") ||
+    //    vars.Resolver.CheckFlag("CreativeStartFirstJump") ||
+    //    vars.Resolver.CheckFlag("CreativeStartOpenPDA") ||
+    //    vars.Resolver.CheckFlag("CreativeStartInteractWithNoA") ||
+    //    vars.Resolver.CheckFlag("CreativeStartFirstSwim")
+    //))
+    //{
+    //    vars.introCutsceneLoadRemovalActive = false;
+    //    vars.ResetCraftSplits();
+    //    vars.creativeStartArmed = false;
+    //    return true;
+    //}
 
 }
 // Update Checks
@@ -162,6 +202,7 @@ onStart
 
     vars.ResetCraftSplits();
     vars.introCutsceneLoadRemovalActive = false;
+    vars.creativeStartArmed = false;
 }
 // Reset Checks
 reset
@@ -172,18 +213,21 @@ reset
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.creativeStartArmed = false;
         return true;
     }
     if (vars.Resolver.CheckFlag("SurvivalStart") && settings["ResetOnNewGameSurvival"])
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.creativeStartArmed = false;
         return true;
     }
-    if (vars.Resolver.CheckFlag("CreativeStart") && settings["ResetOnNewGameCreative"])
+    if (vars.Resolver.CheckFlag("CreativeStartArm") && settings["ResetOnNewGameCreative"])
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.creativeStartArmed = false;
         return true;
     }
 }
@@ -194,6 +238,7 @@ onReset
 
     vars.introCutsceneLoadRemovalActive = false;
     vars.ResetCraftSplits();
+    vars.creativeStartArmed = false;
 }
 // Listening to Update for load Removal
 isLoading
