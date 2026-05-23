@@ -53,16 +53,16 @@ startup
         // Any% Splits Grouping
         { "Any%Group", true, "Any% Splits (Survival & Creative) + (Glitched & Glitchless)", null },
         // Any% Splits Individual Settings
-        { "AdaptationSplit", false, "Any Adaptations", "Any%Group" },
-        { "IntroLifepodAscend", false, "Lifepod Ascend", "Any%Group" },
-        { "IntroButtonPress", false, "Button Press", "Any%Group" },
-        { "IntroLifepodLeftLeverPressed", false, "Lifepod Left Lever Pressed", "Any%Group" },
-        { "IntroLifepodRightLeverPressed", false, "Lifepod Right Lever Pressed", "Any%Group" },
-        { "CraftHighCapacityTank", false, "Craft High Capacity O2 Tank", "Any%Group" },
-        { "CraftFeedbackResonator", false, "Craft Feedback Resonator", "Any%Group" },
-        { "CraftBioscanner", false, "Craft Bioscanner", "Any%Group" },
-        { "CraftScannerSplit", false, "Craft Scanner", "Any%Group" },
-        { "EndObservatoryButtonPress", true, "Observatory Button (End)", "Any%Group" },
+        { "AdaptationSplit", false, "Split on Any Adaptations (Pressure, Digestion, Heat, Axum)", "Any%Group" },
+        { "IntroLifepodAscend", false, "Split on Lifepod Ascend", "Any%Group" },
+        { "IntroButtonPress", false, "Split on Analyze Button Press", "Any%Group" },
+        { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Left Lever Pressed", "Any%Group" },
+        { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Right Lever Pressed", "Any%Group" },
+        { "CraftHighCapacityTank", false, "Split on Crafting High Capacity O2 Tank", "Any%Group" },
+        { "CraftFeedbackResonator", false, "Split on Crafting Feedback Resonator", "Any%Group" },
+        { "CraftBioscanner", false, "Split on Craftng Bioscanner", "Any%Group" },
+        { "CraftScannerSplit", false, "Split on Crafting Scanner", "Any%Group" },
+        { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
         { "MiscellaneousSplitsGroup", true, "Miscellaneous Splits", null },
