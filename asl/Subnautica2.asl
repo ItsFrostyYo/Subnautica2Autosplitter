@@ -39,6 +39,11 @@ startup
 
     dynamic[,] _settings =
     {
+        // Creative Start Grouping
+        { "CreativeStartGroup", true, "Creative Start", null },
+        { "CreativeStartLoadIn", false, "Start on Load In (Priority)", "CreativeStartGroup" },
+        { "CreativeStartFirstInteractMovement", true, "Start on First Interact or Movement", "CreativeStartGroup" },
+
         // Reset Grouping
         { "ResetGroup", true, "Reset Types", null },
         { "ResetOnMainMenu", false, "Reset on Main Menu", "ResetGroup" },
@@ -105,6 +110,8 @@ init
     vars.Events.FunctionFlag("CreativeStartInteractWithNoA", "WBP_ComputerTextInterface_C", "WBP_ComputerTextInterface_C", "UpdateDialogueOptions");
     // First Swim Start [GA_Swim_C] [GA_Swim_C] [OnStarted_E7B4EFF4450EE32D27781F951D040059]
     vars.Events.FunctionFlag("CreativeStartFirstSwim", "GA_Swim_C", "GA_Swim_C", "OnStarted_E7B4EFF4450EE32D27781F951D040059");
+    // Interact with Biomod Station [WBP_CharacterCustomizationScreen_C] [WBP_CharacterCustomizationScreen_C] [ValidItemsChanged]
+    vars.Events.FunctionFlag("CreativeStartInteractWithBiomodStation", "WBP_CharacterCustomizationScreen_C", "WBP_CharacterCustomizationScreen_C", "ValidItemsChanged");
     // Any% Event Listeners
     vars.Events.FunctionFlag("AdaptationSplit", "BP_AngelCombCore_Ripple_NotifyState_C", "BP_AngelCombCore_Ripple_NotifyState_C", "Received_NotifyBegin");
     vars.Events.FunctionFlag("IntroButtonPress", "BP_ScanningButton_C", "BP_ScanningButton_C_UAID_C87F54AE2B72FF0402", "BroadcastButtonPressed");
@@ -137,31 +144,36 @@ start
     }
     
     if (vars.Resolver.CheckFlag("CreativeStartArm"))
-{
-    vars.introCutsceneLoadRemovalActive = false;
-    vars.ResetCraftSplits();
-    vars.creativeStartArmed = false;
-    return true;
-}
+    {
+        // If both are enabled, Load In wins and starts immediately.
+        if (settings["CreativeStartLoadIn"])
+        {
+            vars.introCutsceneLoadRemovalActive = false;
+            vars.ResetCraftSplits();
+            vars.creativeStartArmed = false;
+            return true;
+        }
 
-    // if (vars.Resolver.CheckFlag("CreativeStartArm"))
-    //     vars.creativeStartArmed = true;
+        if (settings["CreativeStartFirstInteractMovement"])
+            vars.creativeStartArmed = true;
+    }
 
-    // if (vars.creativeStartArmed && (
-    //     vars.Resolver.CheckFlag("CreativeStartInteractWithStorage") ||
-    //    vars.Resolver.CheckFlag("CreativeStartFirstMovement") ||
-    //    vars.Resolver.CheckFlag("CreativeStartInteractWithFabricator") ||
-    //    vars.Resolver.CheckFlag("CreativeStartFirstJump") ||
-    //    vars.Resolver.CheckFlag("CreativeStartOpenPDA") ||
-    //    vars.Resolver.CheckFlag("CreativeStartInteractWithNoA") ||
-    //    vars.Resolver.CheckFlag("CreativeStartFirstSwim")
-    //))
-    //{
-    //    vars.introCutsceneLoadRemovalActive = false;
-    //    vars.ResetCraftSplits();
-    //    vars.creativeStartArmed = false;
-    //    return true;
-    //}
+    if (vars.creativeStartArmed && (
+        vars.Resolver.CheckFlag("CreativeStartInteractWithStorage") ||
+        vars.Resolver.CheckFlag("CreativeStartFirstMovement") ||
+        vars.Resolver.CheckFlag("CreativeStartInteractWithFabricator") ||
+        vars.Resolver.CheckFlag("CreativeStartFirstJump") ||
+        vars.Resolver.CheckFlag("CreativeStartOpenPDA") ||
+        vars.Resolver.CheckFlag("CreativeStartInteractWithNoA") ||
+        vars.Resolver.CheckFlag("CreativeStartFirstSwim") ||
+        vars.Resolver.CheckFlag("CreativeStartInteractWithBiomodStation")
+    ))
+    {
+        vars.introCutsceneLoadRemovalActive = false;
+        vars.ResetCraftSplits();
+        vars.creativeStartArmed = false;
+        return true;
+    }
 
 }
 // Update Checks
