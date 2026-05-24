@@ -62,12 +62,14 @@ startup
         { "CraftFeedbackResonator", false, "Split on Crafting Feedback Resonator", "Any%Group" },
         { "CraftBioscanner", false, "Split on Craftng Bioscanner", "Any%Group" },
         { "CraftScannerSplit", false, "Split on Crafting Scanner", "Any%Group" },
+        { "CraftAirbladder", false, "Split on Crafting Airbladder", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
         { "MiscellaneousSplitsGroup", true, "Miscellaneous Splits", null },
         { "CraftingSplits", false, "Crafting Splits", "MiscellaneousSplitsGroup" },
         { "FirstCraft", false, "Split on First Craft", "CraftingSplits" },
+        { "FirstScan", false, "Split on First Scan", "CraftingSplits" },
         // Other in th Future
         // { "Nothing1", false, "More Coming in the Future", "MiscellaneousSplitsGroup" },
 
@@ -123,6 +125,8 @@ init
     vars.Events.FunctionFlag("EndObservatoryButtonPress", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
     vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "ReceiveBeginPlay");
     vars.Events.FunctionFlag("FirstCraft", "ABP_Fabricator_C", "ABP_Fabricator_C2", "OnCraftingStarted_Event");
+    vars.Events.FunctionFlag("FirstScan", "GA_Scan_C", "GA_Scan_C", "OnCompleted_D22E6C2C4F34F79DF063E88A2D0679BA");
+    vars.Events.FunctionFlag("CraftAirbladder", "BP_AirBladder_C", "BP_AirBladder_C", "ExecuteUbergraph_BP_AirBladder");
     // Load Removal Event Listeners
     vars.Events.FunctionFlag("IntroLifepodAscend", "BP_NarrativeSignal_C", "BP_NarrativeSignal_C_UAID_60CF846429E036A502", "OnUnlocked_62920D1448BD71509596E5B554437304");
     vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
@@ -207,6 +211,8 @@ split
     if (vars.Resolver.CheckFlag("EndObservatoryButtonPress") && settings["EndObservatoryButtonPress"]) return true;
     if (vars.Resolver.CheckFlag("CraftScannerSplit") && settings["CraftScannerSplit"] && vars.DoCraftSplit("CraftScannerSplit")) return true;
 	if (vars.Resolver.CheckFlag("FirstCraft") && settings["FirstCraft"] && vars.DoCraftSplit("FirstCraft")) return true;
+    if (vars.Resolver.CheckFlag("CraftAirbladder") && settings["CraftAirbladder"] && vars.DoCraftSplit("CraftAirbladder")) return true;
+	if (vars.Resolver.CheckFlag("FirstScan") && settings["FirstScan"] && vars.DoCraftSplit("FirstScan")) return true;
 }
 onStart
 {
