@@ -1,52 +1,93 @@
 # Subnautica 2 Autosplitter (Uhara-Memory Based)
 
-This contains the **Uhara-Memory Based** **.asl** version of the Subnautica 2 (Early Access) autosplitter.
+This contains the **Uhara-memory based** `.asl` version of the Subnautica 2 autosplitter.
 
 - `asl/Subnautica2.asl`
 
-## What this version includes
+It currently supports these game processes:
+
+- `Subnautica2-Win64-Shipping`
+- `Subnautica2-WinGDK-Shipping`
+
+## Settings
 
 ### Start
 
-Enabling `Start` at the top allows you to have these 2 starts enabled
+The script starts Survival automatically.
 
-- `Survival Start` Starts when you Gain Control in a new Survival run.
-- `Creative Start` Starts when you Gain Control in a new Creative run.
+For Creative, the current `Creative Start` settings are:
+
+- `Start on Load In (Priority)` Starts Creative as soon as the Creative start event is hit.
+- `Start on First Interact or Movement` Arms the Creative start first, then starts on the first valid follow-up action.
+
+If both Creative settings are enabled, `Start on Load In (Priority)` wins.
+
+The current Creative follow-up actions are:
+
+- `Interact with Storage`
+- `First Movement`
+- `Interact with Fabricator`
+- `First Jump`
+- `Open PDA`
+- `Interact with NoA`
+- `First Swim`
+- `Interact with Biomod Station`
 
 ### Reset
 
-Having `Reset` Enabled allows the timer to reset, and allows this setting below to work,
+The current `Reset Types` settings are:
 
-- `Reset on Main Menu` Reset's when you load the main menu (specifically when the game starts construct of the main menu)
-- `Reset on New Game Start (Survival)` Reset's when you start a new Survival game.
-- `Reset on New Game Start (Creative)` Reset's when you start a new Creative game.
+- `Reset on Main Menu` Resets when the main menu construct event is hit.
+- `Reset on New Game Start (Survival)` Resets when a new Survival start event is hit.
+- `Reset on New Game Start (Creative)` Resets when a new Creative start event is hit.
 
 ### Splits
 
-In the `Any%` grouping you can enable any of these to trigger a split automatically,
+The current split groups are:
 
-- `Any Adaptations` Splits when you interact with an Adaptation/Angel Comb.
-- `Lifepod Ascend` Splits when you specifically launch the ascent of the lifepod at the start of the game.
-- `Button Press` Splits on the intro scanning button press.
-- `Lifepod Left Lever Pressed` Splits when the left lifepod lever is pressed.
-- `Lifepod Right Lever Pressed` Splits when the right lifepod lever is pressed.
-- `Craft High Capacity O2 Tank` Splits when you craft and obtain the High Capacity O2 Tank.
-- `Craft Feedback Resonator` Splits when you craft and obtain the Feedback Resonator.
-- `Craft Bioscanner` Splits when you craft and obtain the Bioscanner.
-- `Craft Scanner` Splits when the Scanner equip event is triggered.
-- `Observatory Button` Splits on the end Observatory button press.
+- `Any% Splits (Survival & Creative) + (Glitched & Glitchless)`
+- `Miscellaneous Splits`
 
-In the `Miscellaneous Splits` grouping you can also enable,
+#### Any% Splits
+
+- `Split on Any Adaptations (Pressure, Digestion, Heat, Axum)` Splits when any adaptation event is hit.
+- `Split on Lifepod Ascend` Splits when the intro lifepod ascend event is hit.
+- `Split on Analyze Button Press` Splits on the intro analyze/scanning button press.
+- `Split on Lifepod Left Lever Pressed` Splits when the left lifepod lever is pressed.
+- `Split on Lifepod Right Lever Pressed` Splits when the right lifepod right lever event is hit.
+- `Split on Crafting High Capacity O2 Tank` Splits when the High Capacity O2 Tank equip/craft event is hit.
+- `Split on Crafting Feedback Resonator` Splits when the Feedback Resonator craft/pickup event is hit.
+- `Split on Craftng Bioscanner` Splits when the Bioscanner craft/equip event is hit.
+- `Split on Crafting Scanner` Splits when the Scanner equip event is hit.
+- `Split on Crafting Airbladder` Splits when the Airbladder event is hit.
+- `Split on Observatory Button (End)` Splits on the end Observatory button press.
+
+#### Miscellaneous Splits
+
+Inside `Crafting Splits`, the current settings are:
 
 - `Split on First Craft` Splits on the first craft event of the attempt.
+- `Split on First Scan` Splits on the first scan event of the attempt.
+
+The crafting-related split settings are one-time per attempt.
 
 ### In-Game Time
 
-When comparing against Game Time, the Lifepod Ascend Cutscene time is removed until you gain control again (usually exactly `85 seconds`)
+When comparing against Game Time, only the `Lifepod Ascend` intro cutscene is removed until control is returned.
 
-The Autosplitter will ask you when its loaded if you want to compare against `Game Time`, thats for Cutscene Time Removal.
+The autosplitter will ask whether you want to compare against `Game Time`, which is what enables the cutscene time removal behavior.
 
-If the Autosplitter does not work, EITHER an update broke it, or you must have uhara10 installed which was not automatically installed for you, you can get it [Here](https://raw.githubusercontent.com/ru-mii/uhara/main/bin/uhara10), then you must put it inside the Livesplit Components Folder "Components/uhara10".
+## Uhara
+
+If the autosplitter does not work, either a game update broke it or `uhara10` is missing.
+
+Download `uhara10` here:
+
+- `https://github.com/ru-mii/uhara/raw/refs/heads/main/bin/uhara10`
+
+Then place it in your LiveSplit `Components` folder as:
+
+- `Components/uhara10`
 
 ## License
 
@@ -54,5 +95,5 @@ MIT License. See [LICENSE](./LICENSE).
 
 ## Credits
 
-[Unreal Engine Logger for finding Pointers](https://github.com/ru-mii/Unreal-Logger)
-[Uhara Library for Autosplitters](https://github.com/ru-mii/uhara)
+[Unreal Engine Logger for finding pointers](https://github.com/ru-mii/Unreal-Logger)
+[Uhara Library for autosplitters](https://github.com/ru-mii/uhara)
