@@ -52,6 +52,7 @@ The current split groups are:
 
 - `Split on Any Adaptations (Pressure, Digestion, Heat, Axum)` Splits when any adaptation event is hit.
 - `Split on Lifepod Ascend` Splits when the intro lifepod ascend event is hit.
+- `Split on Unlocking Door (Intro)` Splits when you close the NoA Menu after unlocking the door in the starting room.
 - `Split on Analyze Button Press` Splits on the intro analyze/scanning button press.
 - `Split on Lifepod Left Lever Pressed` Splits when the left lifepod lever is pressed.
 - `Split on Lifepod Right Lever Pressed` Splits when the right lifepod right lever event is hit.

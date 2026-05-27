@@ -54,10 +54,11 @@ startup
         { "Any%Group", true, "Any% Splits (Survival & Creative) + (Glitched & Glitchless)", null },
         // Any% Splits Individual Settings
         { "AdaptationSplit", false, "Split on Any Adaptations (Pressure, Digestion, Heat, Axum)", "Any%Group" },
-        { "IntroLifepodAscend", false, "Split on Lifepod Ascend", "Any%Group" },
-        { "IntroButtonPress", false, "Split on Analyze Button Press", "Any%Group" },
-        { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Left Lever Pressed", "Any%Group" },
-        { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Right Lever Pressed", "Any%Group" },
+        { "IntroLifepodAscend", false, "Split on Lifepod Ascend (Intro)", "Any%Group" },
+        { "IntroUnlockStartingDoor", false, "Split on Unlocking Door (Intro)", "Any%Group" },
+        { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
+        { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Left Lever Pressed (Intro)", "Any%Group" },
+        { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Right Lever Pressed (Intro)", "Any%Group" },
         { "CraftHighCapacityTank", false, "Split on Crafting High Capacity O2 Tank", "Any%Group" },
         { "CraftFeedbackResonator", false, "Split on Crafting Feedback Resonator", "Any%Group" },
         { "CraftBioscanner", false, "Split on Craftng Bioscanner", "Any%Group" },
@@ -117,6 +118,7 @@ init
     // Any% Event Listeners
     vars.Events.FunctionFlag("AdaptationSplit", "BP_AngelCombCore_Ripple_NotifyState_C", "BP_AngelCombCore_Ripple_NotifyState_C", "Received_NotifyBegin");
     vars.Events.FunctionFlag("IntroButtonPress", "BP_ScanningButton_C", "BP_ScanningButton_C_UAID_C87F54AE2B72FF0402", "BroadcastButtonPressed");
+    vars.Events.FunctionFlag("IntroUnlockStartingDoor", "BP_ComputerTextInterface_Terminal_C", "BP_ComputerTextInterface_Terminal_C_UAID_C87F54AE2B72FF0402", "OnWidgetPopped_Event");
     vars.Events.FunctionFlag("IntroLifepodLeftLeverPressed", "BP_LifepodBay_Lever_C", "BP_LifepodBay_Lever_C_UAID_14AC60D60A5A096C02", "BroadcastButtonPressed");
     vars.Events.FunctionFlag("IntroLifepodRightLeverPressed", "BP_LifepodBay_Chunk_Hatch_C", "BP_LifepodBay_Chunk_Hatch_C_UAID_14AC60D60A5A056C02", "RightLever");
     vars.Events.FunctionFlag("CraftHighCapacityTank", "BP_OxygenTank_Medium_C", "BP_OxygenTank_Medium_C", "BPOnEquipped");
@@ -213,6 +215,7 @@ split
 	if (vars.Resolver.CheckFlag("FirstCraft") && settings["FirstCraft"] && vars.DoCraftSplit("FirstCraft")) return true;
     if (vars.Resolver.CheckFlag("CraftAirbladder") && settings["CraftAirbladder"] && vars.DoCraftSplit("CraftAirbladder")) return true;
 	if (vars.Resolver.CheckFlag("FirstScan") && settings["FirstScan"] && vars.DoCraftSplit("FirstScan")) return true;
+    if (vars.Resolver.CheckFlag("IntroUnlockStartingDoor") && settings["IntroUnlockStartingDoor"] && vars.DoCraftSplit("IntroUnlockStartingDoor")) return true;
 }
 onStart
 {
