@@ -77,7 +77,8 @@ The crafting-related split settings are one-time per attempt.
 #### Habitat Builder Crafts
 
 There is also a `Habitat Builder Crafts` section with specific builder placement splits, grouped by build menu category.
-Currently they always split, so it can split multiple times, in the future it may be updated to choose how much they split.
+
+The Habitat Builder craft splits are one-time per attempt.
 
 ### In-Game Time
 

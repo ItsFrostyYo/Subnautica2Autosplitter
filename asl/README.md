@@ -78,6 +78,8 @@ The crafting-related split settings are one-time per attempt.
 
 There is also a `Habitat Builder Crafts` section with specific builder placement splits, grouped by build menu category.
 
+The Habitat Builder craft splits are one-time per attempt.
+
 ### In-Game Time
 
 When comparing against Game Time, only the `Lifepod Ascend` intro cutscene is removed until control is returned.

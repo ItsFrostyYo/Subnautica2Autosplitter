@@ -320,33 +320,33 @@ split
     if (vars.Resolver.CheckFlag("FirstScan") && settings["FirstScan"] && vars.DoCraftSplit("FirstScan")) return true;
 
     // Habitat Builder Crafts Splits
-    if (vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatch"]) return true;
-    if (vars.Resolver.CheckFlag("BuildMoonpoolDock") && settings["BuildMoonpoolDock"]) return true;
-    if (vars.Resolver.CheckFlag("BuildVehicleFabricator") && settings["BuildVehicleFabricator"]) return true;
-    if (vars.Resolver.CheckFlag("BuildModificationStation") && settings["BuildModificationStation"]) return true;
-    if (vars.Resolver.CheckFlag("BuildProcessorStation") && settings["BuildProcessorStation"]) return true;
-    if (vars.Resolver.CheckFlag("BuildBioLabStation") && settings["BuildBioLabStation"]) return true;
-    if (vars.Resolver.CheckFlag("BuildAnyLockerThatHasALabel") && settings["BuildAnyLockerThatHasALabel"]) return true;
-    if (vars.Resolver.CheckFlag("BuildTailingChest") && settings["BuildTailingChest"]) return true;
-    if (vars.Resolver.CheckFlag("BuildWallRack") && settings["BuildWallRack"]) return true;
-    if (vars.Resolver.CheckFlag("BuildSmallCeilingLamp") && settings["BuildSmallCeilingLamp"]) return true;
-    if (vars.Resolver.CheckFlag("BuildRectangularCeilingLight") && settings["BuildRectangularCeilingLight"]) return true;
-    if (vars.Resolver.CheckFlag("BuildWallLightSmall") && settings["BuildWallLightSmall"]) return true;
-    if (vars.Resolver.CheckFlag("BuildAxumWallLight") && settings["BuildAxumWallLight"]) return true;
-    if (vars.Resolver.CheckFlag("BuildBatteryTerminal") && settings["BuildBatteryTerminal"]) return true;
-    if (vars.Resolver.CheckFlag("BuildBioreactor") && settings["BuildBioreactor"]) return true;
-    if (vars.Resolver.CheckFlag("BuildPowerStorage") && settings["BuildPowerStorage"]) return true;
-    if (vars.Resolver.CheckFlag("BuildBiobed") && settings["BuildBiobed"]) return true;
-    if (vars.Resolver.CheckFlag("BuildNoATerminal") && settings["BuildNoATerminal"]) return true;
-    if (vars.Resolver.CheckFlag("BuildScannerStation") && settings["BuildScannerStation"]) return true;
-    if (vars.Resolver.CheckFlag("BuildSolarPanel") && settings["BuildSolarPanel"]) return true;
-    if (vars.Resolver.CheckFlag("BuildHydroelectricTurbine") && settings["BuildHydroelectricTurbine"]) return true;
-    if (vars.Resolver.CheckFlag("BuildAndAttachPowerTransmitter") && settings["BuildAndAttachPowerTransmitter"]) return true;
-    if (vars.Resolver.CheckFlag("BuildAndAttachExteriorWallLight") && settings["BuildAndAttachExteriorWallLight"]) return true;
-    if (vars.Resolver.CheckFlag("BuildOREditHabitatBeacon") && settings["BuildOREditHabitatBeacon"]) return true;
-    if (vars.Resolver.CheckFlag("BuildWallUnitSmall") && settings["BuildWallUnitSmall"]) return true;
-    if (vars.Resolver.CheckFlag("BuildMetalFarm") && settings["BuildMetalFarm"]) return true;
-    if (vars.Resolver.CheckFlag("BuildPlantMimicPylon") && settings["BuildPlantMimicPylon"]) return true;
+    if (vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatch"] && vars.DoCraftSplit("BuildHatch")) return true;
+    if (vars.Resolver.CheckFlag("BuildMoonpoolDock") && settings["BuildMoonpoolDock"] && vars.DoCraftSplit("BuildMoonpoolDock")) return true;
+    if (vars.Resolver.CheckFlag("BuildVehicleFabricator") && settings["BuildVehicleFabricator"] && vars.DoCraftSplit("BuildVehicleFabricator")) return true;
+    if (vars.Resolver.CheckFlag("BuildModificationStation") && settings["BuildModificationStation"] && vars.DoCraftSplit("BuildModificationStation")) return true;
+    if (vars.Resolver.CheckFlag("BuildProcessorStation") && settings["BuildProcessorStation"] && vars.DoCraftSplit("BuildProcessorStation")) return true;
+    if (vars.Resolver.CheckFlag("BuildBioLabStation") && settings["BuildBioLabStation"] && vars.DoCraftSplit("BuildBioLabStation")) return true;
+    if (vars.Resolver.CheckFlag("BuildAnyLockerThatHasALabel") && settings["BuildAnyLockerThatHasALabel"] && vars.DoCraftSplit("BuildAnyLockerThatHasALabel")) return true;
+    if (vars.Resolver.CheckFlag("BuildTailingChest") && settings["BuildTailingChest"] && vars.DoCraftSplit("BuildTailingChest")) return true;
+    if (vars.Resolver.CheckFlag("BuildWallRack") && settings["BuildWallRack"] && vars.DoCraftSplit("BuildWallRack")) return true;
+    if (vars.Resolver.CheckFlag("BuildSmallCeilingLamp") && settings["BuildSmallCeilingLamp"] && vars.DoCraftSplit("BuildSmallCeilingLamp")) return true;
+    if (vars.Resolver.CheckFlag("BuildRectangularCeilingLight") && settings["BuildRectangularCeilingLight"] && vars.DoCraftSplit("BuildRectangularCeilingLight")) return true;
+    if (vars.Resolver.CheckFlag("BuildWallLightSmall") && settings["BuildWallLightSmall"] && vars.DoCraftSplit("BuildWallLightSmall")) return true;
+    if (vars.Resolver.CheckFlag("BuildAxumWallLight") && settings["BuildAxumWallLight"] && vars.DoCraftSplit("BuildAxumWallLight")) return true;
+    if (vars.Resolver.CheckFlag("BuildBatteryTerminal") && settings["BuildBatteryTerminal"] && vars.DoCraftSplit("BuildBatteryTerminal")) return true;
+    if (vars.Resolver.CheckFlag("BuildBioreactor") && settings["BuildBioreactor"] && vars.DoCraftSplit("BuildBioreactor")) return true;
+    if (vars.Resolver.CheckFlag("BuildPowerStorage") && settings["BuildPowerStorage"] && vars.DoCraftSplit("BuildPowerStorage")) return true;
+    if (vars.Resolver.CheckFlag("BuildBiobed") && settings["BuildBiobed"] && vars.DoCraftSplit("BuildBiobed")) return true;
+    if (vars.Resolver.CheckFlag("BuildNoATerminal") && settings["BuildNoATerminal"] && vars.DoCraftSplit("BuildNoATerminal")) return true;
+    if (vars.Resolver.CheckFlag("BuildScannerStation") && settings["BuildScannerStation"] && vars.DoCraftSplit("BuildScannerStation")) return true;
+    if (vars.Resolver.CheckFlag("BuildSolarPanel") && settings["BuildSolarPanel"] && vars.DoCraftSplit("BuildSolarPanel")) return true;
+    if (vars.Resolver.CheckFlag("BuildHydroelectricTurbine") && settings["BuildHydroelectricTurbine"] && vars.DoCraftSplit("BuildHydroelectricTurbine")) return true;
+    if (vars.Resolver.CheckFlag("BuildAndAttachPowerTransmitter") && settings["BuildAndAttachPowerTransmitter"] && vars.DoCraftSplit("BuildAndAttachPowerTransmitter")) return true;
+    if (vars.Resolver.CheckFlag("BuildAndAttachExteriorWallLight") && settings["BuildAndAttachExteriorWallLight"] && vars.DoCraftSplit("BuildAndAttachExteriorWallLight")) return true;
+    if (vars.Resolver.CheckFlag("BuildOREditHabitatBeacon") && settings["BuildOREditHabitatBeacon"] && vars.DoCraftSplit("BuildOREditHabitatBeacon")) return true;
+    if (vars.Resolver.CheckFlag("BuildWallUnitSmall") && settings["BuildWallUnitSmall"] && vars.DoCraftSplit("BuildWallUnitSmall")) return true;
+    if (vars.Resolver.CheckFlag("BuildMetalFarm") && settings["BuildMetalFarm"] && vars.DoCraftSplit("BuildMetalFarm")) return true;
+    if (vars.Resolver.CheckFlag("BuildPlantMimicPylon") && settings["BuildPlantMimicPylon"] && vars.DoCraftSplit("BuildPlantMimicPylon")) return true;
 }
 onStart
 {
