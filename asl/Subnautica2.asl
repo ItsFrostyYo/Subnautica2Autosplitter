@@ -180,8 +180,6 @@ init
     vars.Events.FunctionFlag("CraftBioscanner", "BP_ScannerV2_C", "BP_ScannerV2_C", "ReceiveBeginPlay");
     vars.Events.FunctionFlag("EndObservatoryButtonPress", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
     vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "ReceiveBeginPlay");
-    vars.Events.FunctionFlag("FirstCraft", "ABP_Fabricator_C", "ABP_Fabricator_C2", "OnCraftingStarted_Event");
-    vars.Events.FunctionFlag("FirstScan", "GA_Scan_C", "GA_Scan_C", "OnCompleted_D22E6C2C4F34F79DF063E88A2D0679BA");
     vars.Events.FunctionFlag("CraftAirbladder", "BP_AirBladder_C", "BP_AirBladder_C", "ExecuteUbergraph_BP_AirBladder");
     vars.Events.FunctionFlag("BuildHatchAfterSonicResonatorBlast", "GA_SonicResonator_Blast_C", "GA_SonicResonator_Blast_C", "OnCompleted_B65B54F241049DF1F76DA59AAF9E5B09");
 
@@ -190,6 +188,8 @@ init
     vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
 
     // Miscellaneous Event Listeners
+    vars.Events.FunctionFlag("FirstCraft", "ABP_Fabricator_C", "ABP_Fabricator_C2", "OnCraftingStarted_Event");
+    vars.Events.FunctionFlag("FirstScan", "GA_Scan_C", "GA_Scan_C", "OnCompleted_D22E6C2C4F34F79DF063E88A2D0679BA");
     vars.Events.FunctionFlag("SonicResonatorBlastShot", "GA_SonicResonator_Blast_C", "GA_SonicResonator_Blast_C", "OnCompleted_B65B54F241049DF1F76DA59AAF9E5B09");
     vars.Events.FunctionFlag("InteractWithSingleBed", "BP_BedSingle_C", "BP_BedSingle_C", "AttachEvent");
 
@@ -221,7 +221,9 @@ init
     vars.Events.FunctionFlag("BuildWallUnitSmall", "BP_Greeble_WallUnit_A_C", "BP_Greeble_WallUnit_A_C", "BndEvt__BP_CeilingLight_Rect_A_UWEPoweredAppliance_K2Node_ComponentBoundEvent_1_OnPoweredStateChanged__DelegateSignature");
     vars.Events.FunctionFlag("BuildMetalFarm", "BP_MetalFarm_C", "BP_MetalFarm_C", "BndEvt__BP_MetalFarm_UWEPowerSystem_K2Node_ComponentBoundEvent_1_PoweredStateChanged__DelegateSignature");
     vars.Events.FunctionFlag("BuildPlantMimicPylon", "BP_Farmable_FeelerTree_C", "BP_Farmable_FeelerTree_C", "BndEvt__BP_Farmable_OxygenPlant_UWESeedGrower_K2Node_ComponentBoundEvent_1_SeedSpawnedDelegate__DelegateSignature");
-    
+    // [NOT SAFE DONT ADD] Splits on Build Time of Day Display OR Time of Day Display Has new Day Changed [WBP_TimeOfDayTracker_C] [WBP_TimeOfDayTracker_C] [HandleDayPhaseChanged]
+    // [NOT SAFE DONT ADD] Build Thermal Plant [BP_ThermalPlant_C] [BP_ThermalPlant_C] [ExecuteUbergraph_BP_ThermalPlant]
+
     vars.introCutsceneLoadRemovalActive = false;
     vars.creativeStartArmed = false;
     vars.sonicResonatorBlastHatchArmed = false;
