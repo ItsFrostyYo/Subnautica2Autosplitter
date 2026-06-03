@@ -47,6 +47,7 @@ The current split groups are:
 
 - `Any% Splits (Survival & Creative) + (Glitched & Glitchless)`
 - `Miscellaneous Splits`
+- `Habitat Builder Crafts`
 
 #### Any% Splits
 
@@ -61,16 +62,22 @@ The current split groups are:
 - `Split on Craftng Bioscanner` Splits when the Bioscanner craft/equip event is hit.
 - `Split on Crafting Scanner` Splits when the Scanner equip event is hit.
 - `Split on Crafting Airbladder` Splits when the Airbladder event is hit.
+- `Split on Building Hatch after Sonic Resonator` Arms on Sonic Resonator Blast Shot, then splits on the next Hatch build after that.
 - `Split on Observatory Button (End)` Splits on the end Observatory button press.
 
 #### Miscellaneous Splits
 
-Inside `Crafting Splits`, the current settings are:
-
 - `Split on First Craft` Splits on the first craft event of the attempt.
 - `Split on First Scan` Splits on the first scan event of the attempt.
+- `Split on Sonic Resonator Blast Shot` Splits on Sonic Resonator Blast Shot.
+- `Split on Interact with Single Bed` Splits when you interact with a Single Bed.
 
 The crafting-related split settings are one-time per attempt.
+
+#### Habitat Builder Crafts
+
+There is also a `Habitat Builder Crafts` section with specific builder placement splits, grouped by build menu category.
+Currently they always split, so it can split multiple times, in the future it may be updated to choose how much they split.
 
 ### In-Game Time
 

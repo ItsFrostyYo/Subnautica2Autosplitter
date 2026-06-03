@@ -23,6 +23,7 @@ startup
 
     vars.introCutsceneLoadRemovalActive = false;
     vars.creativeStartArmed = false;
+    vars.sonicResonatorBlastHatchArmed = false;
     vars.CompletedCraftSplits = new HashSet<string>();
 
     vars.DoCraftSplit = (Func<string, bool>)((key) =>
@@ -40,9 +41,9 @@ startup
     dynamic[,] _settings =
     {
         // Creative Start Grouping
-        { "CreativeStartGroup", true, "Creative Start", null },
-        { "CreativeStartLoadIn", true, "Start on Load In (Priority)", "CreativeStartGroup" },
-        { "CreativeStartFirstInteractMovement", false, "Start on First Interact or Movement", "CreativeStartGroup" },
+        { "CreativeStartGroup", true, "Creative Start Types", null },
+        { "CreativeStartLoadIn", true, "Start on Load In (Leaderboard)", "CreativeStartGroup" },
+        { "CreativeStartFirstInteractMovement", false, "Start on First Interact or Movement (Experimental)", "CreativeStartGroup" },
 
         // Reset Grouping
         { "ResetGroup", true, "Reset Types", null },
@@ -59,20 +60,81 @@ startup
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
         { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Left Lever Pressed (Intro)", "Any%Group" },
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Right Lever Pressed (Intro)", "Any%Group" },
-        { "CraftHighCapacityTank", false, "Split on Crafting High Capacity O2 Tank", "Any%Group" },
-        { "CraftFeedbackResonator", false, "Split on Crafting Feedback Resonator", "Any%Group" },
-        { "CraftBioscanner", false, "Split on Craftng Bioscanner", "Any%Group" },
-        { "CraftScannerSplit", false, "Split on Crafting Scanner", "Any%Group" },
-        { "CraftAirbladder", false, "Split on Crafting Airbladder", "Any%Group" },
+        { "CraftHighCapacityTank", false, "Split on Crafting High Capacity O2 Tank (Glitchless)", "Any%Group" },
+        { "CraftFeedbackResonator", false, "Split on Crafting Feedback Resonator (Glitchless)", "Any%Group" },
+        { "CraftBioscanner", false, "Split on Craftng Bioscanner (Glitchless + NME)", "Any%Group" },
+        { "CraftScannerSplit", false, "Split on Crafting Scanner (Glitched)", "Any%Group" },
+        { "CraftAirbladder", false, "Split on Crafting Airbladder (Glitched)", "Any%Group" },
+        { "BuildHatchAfterSonicResonator", false, "Split on Building Hatch after Sonic Resonator Blast (NME)", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
         { "MiscellaneousSplitsGroup", true, "Miscellaneous Splits", null },
-        { "CraftingSplits", false, "Crafting Splits", "MiscellaneousSplitsGroup" },
-        { "FirstCraft", false, "Split on First Craft", "CraftingSplits" },
-        { "FirstScan", false, "Split on First Scan", "CraftingSplits" },
-        // Other in th Future
-        // { "Nothing1", false, "More Coming in the Future", "MiscellaneousSplitsGroup" },
+        { "FirstCraft", false, "Split on First Craft", "MiscellaneousSplitsGroup" },
+        { "FirstScan", false, "Split on First Scan (Used for Rosetta Stone in Glitched)", "MiscellaneousSplitsGroup" },
+        { "SonicResonatorBlastShot", false, "Split on Sonic Resonator Blast Shot", "MiscellaneousSplitsGroup" },
+        { "InteractWithSingleBed", false, "Split on Interact with Single Bed", "MiscellaneousSplitsGroup" },
+
+        // Habitat Builder Crafts Grouping
+        { "HabitatBuilderCraftsGroup", true, "Habitat Builder Crafts", null },
+
+        // Standard Elements Grouping
+        { "HabitatBuilderStandardElementsGroup", false, "Standard Elements", "HabitatBuilderCraftsGroup" },
+        { "HabitatBuilderBasePiecesGroup", false, "Base Pieces", "HabitatBuilderStandardElementsGroup" },
+        { "BuildHatch", false, "Split on Build Hatch", "HabitatBuilderBasePiecesGroup" },
+        { "HabitatBuilderVehiclesGroup", false, "Vehicles", "HabitatBuilderStandardElementsGroup" },
+        { "BuildMoonpoolDock", false, "Split on Build Moonpool Dock", "HabitatBuilderVehiclesGroup" },
+        { "BuildVehicleFabricator", false, "Split on Build Vehicle Fabricator", "HabitatBuilderVehiclesGroup" },
+
+        // Interior Facilities Grouping
+        { "HabitatBuilderInteriorFacilitiesGroup", false, "Interior Facilities", "HabitatBuilderCraftsGroup" },
+        { "HabitatBuilderProductionGroup", false, "Production", "HabitatBuilderInteriorFacilitiesGroup" },
+        { "BuildModificationStation", false, "Split on Build Modification Station", "HabitatBuilderProductionGroup" },
+        { "BuildProcessorStation", false, "Split on Build Processor Station", "HabitatBuilderProductionGroup" },
+        { "BuildBioLabStation", false, "Split on Build BioLab Station", "HabitatBuilderProductionGroup" },
+        { "HabitatBuilderStorageGroup", false, "Storage", "HabitatBuilderInteriorFacilitiesGroup" },
+        { "BuildAnyLockerThatHasALabel", false, "Split on Build Any Locker (That has a label)", "HabitatBuilderStorageGroup" },
+        { "BuildTailingChest", false, "Split on Build Tailing Chest", "HabitatBuilderStorageGroup" },
+        { "BuildWallRack", false, "Split on Build Wall Rack", "HabitatBuilderStorageGroup" },
+        { "HabitatBuilderLightingGroup", false, "Lighting", "HabitatBuilderInteriorFacilitiesGroup" },
+        { "BuildSmallCeilingLamp", false, "Split on Build Small Ceiling Lamp", "HabitatBuilderLightingGroup" },
+        { "BuildRectangularCeilingLight", false, "Split on Build Rectangular Ceiling Light", "HabitatBuilderLightingGroup" },
+        { "BuildWallLightSmall", false, "Split on Build Wall Light Small", "HabitatBuilderLightingGroup" },
+        { "BuildAxumWallLight", false, "Split on Build Axum Wall Light", "HabitatBuilderLightingGroup" },
+        { "HabitatBuilderPowerGroup", false, "Power", "HabitatBuilderInteriorFacilitiesGroup" },
+        { "BuildBatteryTerminal", false, "Split on Build Battery Terminal", "HabitatBuilderPowerGroup" },
+        { "BuildBioreactor", false, "Split on Build Bioreactor", "HabitatBuilderPowerGroup" },
+        { "BuildPowerStorage", false, "Split on Build Power Storage", "HabitatBuilderPowerGroup" },
+        { "HabitatBuilderHabitatSystemsGroup", false, "Habitat Systems", "HabitatBuilderInteriorFacilitiesGroup" },
+        { "BuildBiobed", false, "Split on Build Biobed", "HabitatBuilderHabitatSystemsGroup" },
+        { "BuildNoATerminal", false, "Split on Build NoA Terminal", "HabitatBuilderHabitatSystemsGroup" },
+        { "BuildScannerStation", false, "Split on Build Scanner Station", "HabitatBuilderHabitatSystemsGroup" },
+
+        // Exterior Facilities Grouping
+        { "HabitatBuilderExteriorFacilitiesGroup", false, "Exterior Facilities", "HabitatBuilderCraftsGroup" },
+        { "HabitatBuilderExteriorPowerGroup", false, "Power", "HabitatBuilderExteriorFacilitiesGroup" },
+        { "BuildSolarPanel", false, "Split on Build Solar Panel", "HabitatBuilderExteriorPowerGroup" },
+        { "BuildHydroelectricTurbine", false, "Split on Build Hydroelectric Turbine", "HabitatBuilderExteriorPowerGroup" },
+        { "BuildAndAttachPowerTransmitter", false, "Split on Build & Attach Power Transmitter", "HabitatBuilderExteriorPowerGroup" },
+        { "HabitatBuilderExteriorLightingGroup", false, "Lighting", "HabitatBuilderExteriorFacilitiesGroup" },
+        { "BuildAndAttachExteriorWallLight", false, "Split on Build & Attach Exterior Wall Light", "HabitatBuilderExteriorLightingGroup" },
+        { "BuildOREditHabitatBeacon", false, "Split on Build OR Edit Habitat Beacon", "HabitatBuilderExteriorLightingGroup" },
+
+        // Utility Grouping
+        { "HabitatBuilderUtilityGroup", false, "Utility", "HabitatBuilderCraftsGroup" },
+        { "HabitatBuilderUtilitySubGroup", false, "Utility", "HabitatBuilderUtilityGroup" },
+
+        // Furniture and Decor Grouping
+        { "HabitatBuilderFurnitureAndDecorGroup", false, "Furniture and Decor", "HabitatBuilderCraftsGroup" },
+        { "HabitatBuilderDecorationGroup", false, "Decoration", "HabitatBuilderFurnitureAndDecorGroup" },
+        { "BuildWallUnitSmall", false, "Split on Build Wall Unit Small", "HabitatBuilderDecorationGroup" },
+
+        // Cultivation Grouping
+        { "HabitatBuilderCultivationGroup", false, "Cultivation", "HabitatBuilderCraftsGroup" },
+        { "HabitatBuilderCultivationStructuresGroup", false, "Cultivation Structures", "HabitatBuilderCultivationGroup" },
+        { "BuildMetalFarm", false, "Split on Build Metal Farm", "HabitatBuilderCultivationStructuresGroup" },
+        { "HabitatBuilderPlantablesGroup", false, "Plantables", "HabitatBuilderCultivationGroup" },
+        { "BuildPlantMimicPylon", false, "Split on Build/Plant Mimic Pylon", "HabitatBuilderPlantablesGroup" },
 
     };
     // Creates Settings
@@ -99,21 +161,13 @@ init
     vars.Events.FunctionFlag("CreativeStartArm", "BP_CreativeModePlayerStart_C", "BP_CreativeModePlayerStart_C_UAID_F02F74AC8D0CF16102", "OnStartConditionsApplied");
     vars.Events.FunctionFlag("ResetOnMainMenu", "WBP_MainLobbyScreen_C", "WBP_MainLobbyScreen_C", "Construct");
     // Creative Start Follow-Up Event Listeners
-    // Interact with Storage Start [BP_Character_01_C] [BP_Character_01_C] [OnInteractWithOtherInventory]
     vars.Events.FunctionFlag("CreativeStartInteractWithStorage", "BP_Character_01_C", "BP_Character_01_C", "OnInteractWithOtherInventory");
-    // First Movement Start [GA_Walk_C] [GA_Walk_C] [OnStarted_CD32F07B44EEF144D8A18C86FCFC3E47]
     vars.Events.FunctionFlag("CreativeStartFirstMovement", "GA_Walk_C", "GA_Walk_C", "OnStarted_CD32F07B44EEF144D8A18C86FCFC3E47");
-    // Interact with Fabricator Start [WBP_FabricatorScreen_C] [WBP_FabricatorScreen_C] [RecipeListEntriesRefreshed]
     vars.Events.FunctionFlag("CreativeStartInteractWithFabricator", "WBP_FabricatorScreen_C", "WBP_FabricatorScreen_C", "RecipeListEntriesRefreshed");
-    // First Jump Start [BP_Character_01_C] [BP_Character_01_C] [OnJumped]
     vars.Events.FunctionFlag("CreativeStartFirstJump", "BP_Character_01_C", "BP_Character_01_C", "OnJumped");
-    // Open PDA Start [WBP_Inventory_C] [WBP_Inventory_C] [ExecuteUbergraph_WBP_Inventory]
     vars.Events.FunctionFlag("CreativeStartOpenPDA", "WBP_Inventory_C", "WBP_Inventory_C", "ExecuteUbergraph_WBP_Inventory");
-    // Interact with NoA Start [WBP_ComputerTextInterface_C] [WBP_ComputerTextInterface_C] [UpdateDialogueOptions]
     vars.Events.FunctionFlag("CreativeStartInteractWithNoA", "WBP_ComputerTextInterface_C", "WBP_ComputerTextInterface_C", "UpdateDialogueOptions");
-    // First Swim Start [GA_Swim_C] [GA_Swim_C] [OnStarted_E7B4EFF4450EE32D27781F951D040059]
     vars.Events.FunctionFlag("CreativeStartFirstSwim", "GA_Swim_C", "GA_Swim_C", "OnStarted_E7B4EFF4450EE32D27781F951D040059");
-    // Interact with Biomod Station [WBP_CharacterCustomizationScreen_C] [WBP_CharacterCustomizationScreen_C] [ValidItemsChanged]
     vars.Events.FunctionFlag("CreativeStartInteractWithBiomodStation", "WBP_CharacterCustomizationScreen_C", "WBP_CharacterCustomizationScreen_C", "ValidItemsChanged");
     // Any% Event Listeners
     vars.Events.FunctionFlag("AdaptationSplit", "BP_AngelCombCore_Ripple_NotifyState_C", "BP_AngelCombCore_Ripple_NotifyState_C", "Received_NotifyBegin");
@@ -129,12 +183,48 @@ init
     vars.Events.FunctionFlag("FirstCraft", "ABP_Fabricator_C", "ABP_Fabricator_C2", "OnCraftingStarted_Event");
     vars.Events.FunctionFlag("FirstScan", "GA_Scan_C", "GA_Scan_C", "OnCompleted_D22E6C2C4F34F79DF063E88A2D0679BA");
     vars.Events.FunctionFlag("CraftAirbladder", "BP_AirBladder_C", "BP_AirBladder_C", "ExecuteUbergraph_BP_AirBladder");
+    vars.Events.FunctionFlag("BuildHatchAfterSonicResonatorBlast", "GA_SonicResonator_Blast_C", "GA_SonicResonator_Blast_C", "OnCompleted_B65B54F241049DF1F76DA59AAF9E5B09");
+
     // Load Removal Event Listeners
     vars.Events.FunctionFlag("IntroLifepodAscend", "BP_NarrativeSignal_C", "BP_NarrativeSignal_C_UAID_60CF846429E036A502", "OnUnlocked_62920D1448BD71509596E5B554437304");
     vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
 
+    // Miscellaneous Event Listeners
+    vars.Events.FunctionFlag("SonicResonatorBlastShot", "GA_SonicResonator_Blast_C", "GA_SonicResonator_Blast_C", "OnCompleted_B65B54F241049DF1F76DA59AAF9E5B09");
+    vars.Events.FunctionFlag("InteractWithSingleBed", "BP_BedSingle_C", "BP_BedSingle_C", "AttachEvent");
+
+    // Habitat Builder Crafts Event Listeners
+    vars.Events.FunctionFlag("BuildHatch", "BP_BaseHatch_C", "BP_BaseHatch_C", "BndEvt__BP_BaseHatch_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildMoonpoolDock", "BP_MoonPool_Dock_C", "BP_MoonPool_Dock_C", "BndEvt__BP_TadpoleDock_Blister_UWEAttachable_K2Node_ComponentBoundEvent_1_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildVehicleFabricator", "BP_VehicleFabricator_C", "BP_VehicleFabricator_C", "BndEvt__BP_DryDockFabricator_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildModificationStation", "BP_ModificationStation_C", "BP_ModificationStation_C", "BndEvt__BP_Fabricator_UWEAttachable_K2Node_ComponentBoundEvent_2_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildProcessorStation", "BP_ProcessorStation_C", "BP_ProcessorStation_C", "OnAttached");
+    vars.Events.FunctionFlag("BuildBioLabStation", "BP_BioLab_C", "BP_BioLab_C", "BndEvt__BP_BioLab_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildAnyLockerThatHasALabel", "BPC_LockerLabel_C", "BPC_LockerLabel", "BeginPlayEvent");
+    vars.Events.FunctionFlag("BuildTailingChest", "BP_Tailing_Chest_C", "BP_Tailing_Chest_C", "OnPlacementChanged");
+    vars.Events.FunctionFlag("BuildWallRack", "BP_Carryable_WallRack_C", "BP_Carryable_WallRack_C", "OnLockAdded");
+    vars.Events.FunctionFlag("BuildSmallCeilingLamp", "BP_LampCeilingBulb_C", "BP_LampCeilingBulb_C", "BndEvt__BP_LampBase_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildRectangularCeilingLight", "BP_CeilingLight_Rect_A_C", "BP_CeilingLight_Rect_A_C", "BndEvt__BP_CeilingLight_Rect_A_UWEPoweredAppliance_K2Node_ComponentBoundEvent_1_OnPoweredStateChanged__DelegateSignature");
+    vars.Events.FunctionFlag("BuildWallLightSmall", "BP_Light_Wall_Small_C", "BP_Light_Wall_Small_C", "BndEvt__BP_LampWallBulb_UWEPoweredAppliance_K2Node_ComponentBoundEvent_1_OnPoweredStateChanged__DelegateSignature");
+    vars.Events.FunctionFlag("BuildAxumWallLight", "BP_AxumWallLamp_C", "BP_AxumWallLamp_C", "BndEvt__BP_AxumWallLamp_UWEPoweredAppliance_K2Node_ComponentBoundEvent_0_OnPoweredStateChanged__DelegateSignature");
+    vars.Events.FunctionFlag("BuildBatteryTerminal", "BP_BasicBatteryTerminal_C", "BP_BasicBatteryTerminal_C", "BndEvt__BP_PowerTerminalBasic_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildBioreactor", "BP_Bioreactor_C", "BP_Bioreactor_C", "BndEvt__BP_Bioreactor_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildPowerStorage", "BP_PowerGridCapacitor_C", "BP_PowerGridCapacitor_C", "BndEvt__BP_PowerGridCapacitor_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildBiobed", "BP_BioBed_Buildable_C", "BP_BioBed_Buildable_C", "BndEvt__BP_BioBed_UWEPoweredAppliance_K2Node_ComponentBoundEvent_1_OnPoweredStateChanged__DelegateSignature");
+    vars.Events.FunctionFlag("BuildNoATerminal", "BP_ComputerTextInterface_Terminal_PlayerBuilt_C", "BP_ComputerTextInterface_Terminal_PlayerBuilt_C", "BndEvt__BP_ComputerTextInterface_Terminal_UWEAttachable_K2Node_ComponentBoundEvent_5_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildScannerStation", "BP_ScannerStation_C", "BP_ScannerStation_C", "BndEvt__BP_ScannerStation_Proto_UWEAttachable_K2Node_ComponentBoundEvent_1_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildSolarPanel", "BP_SolarPanel_C", "BP_SolarPanel_C", "BndEvt__BP_SolarPanel_UWEAttachable_K2Node_ComponentBoundEvent_1_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildHydroelectricTurbine", "BP_HydroelectricTurbine_C", "BP_HydroelectricTurbine_C", "OnPlacementChanged");
+    vars.Events.FunctionFlag("BuildAndAttachPowerTransmitter", "BP_PowerTransmitter_C", "BP_PowerTransmitter_C", "BndEvt__BP_PowerTransmitter_UWEAttachable_K2Node_ComponentBoundEvent_2_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildAndAttachExteriorWallLight", "BP_LampExteriorWallBulb_C", "BP_LampExteriorWallBulb_C", "BndEvt__BP_LampBase_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
+    vars.Events.FunctionFlag("BuildOREditHabitatBeacon", "BP_BaseSignal_C", "BP_BaseSignal_C", "OnPingChanged_Event");
+    vars.Events.FunctionFlag("BuildWallUnitSmall", "BP_Greeble_WallUnit_A_C", "BP_Greeble_WallUnit_A_C", "BndEvt__BP_CeilingLight_Rect_A_UWEPoweredAppliance_K2Node_ComponentBoundEvent_1_OnPoweredStateChanged__DelegateSignature");
+    vars.Events.FunctionFlag("BuildMetalFarm", "BP_MetalFarm_C", "BP_MetalFarm_C", "BndEvt__BP_MetalFarm_UWEPowerSystem_K2Node_ComponentBoundEvent_1_PoweredStateChanged__DelegateSignature");
+    vars.Events.FunctionFlag("BuildPlantMimicPylon", "BP_Farmable_FeelerTree_C", "BP_Farmable_FeelerTree_C", "BndEvt__BP_Farmable_OxygenPlant_UWESeedGrower_K2Node_ComponentBoundEvent_1_SeedSpawnedDelegate__DelegateSignature");
+    
     vars.introCutsceneLoadRemovalActive = false;
     vars.creativeStartArmed = false;
+    vars.sonicResonatorBlastHatchArmed = false;
 }
 // Start Checks
 start
@@ -195,6 +285,9 @@ update
 
     if (vars.Resolver.CheckFlag("IntroCutsceneLoadRemovalEnd"))
         vars.introCutsceneLoadRemovalActive = false;
+
+    if (vars.Resolver.CheckFlag("BuildHatchAfterSonicResonatorBlast"))
+        vars.sonicResonatorBlastHatchArmed = true;
 }
 // Split Checks
 split
@@ -212,10 +305,48 @@ split
     if (vars.Resolver.CheckFlag("CraftBioscanner") && settings["CraftBioscanner"] && vars.DoCraftSplit("CraftBioscanner")) return true;
     if (vars.Resolver.CheckFlag("EndObservatoryButtonPress") && settings["EndObservatoryButtonPress"]) return true;
     if (vars.Resolver.CheckFlag("CraftScannerSplit") && settings["CraftScannerSplit"] && vars.DoCraftSplit("CraftScannerSplit")) return true;
-	if (vars.Resolver.CheckFlag("FirstCraft") && settings["FirstCraft"] && vars.DoCraftSplit("FirstCraft")) return true;
     if (vars.Resolver.CheckFlag("CraftAirbladder") && settings["CraftAirbladder"] && vars.DoCraftSplit("CraftAirbladder")) return true;
-	if (vars.Resolver.CheckFlag("FirstScan") && settings["FirstScan"] && vars.DoCraftSplit("FirstScan")) return true;
     if (vars.Resolver.CheckFlag("IntroUnlockStartingDoor") && settings["IntroUnlockStartingDoor"] && vars.DoCraftSplit("IntroUnlockStartingDoor")) return true;
+    if (vars.sonicResonatorBlastHatchArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterSonicResonator"])
+    {
+        vars.sonicResonatorBlastHatchArmed = false;
+        return true;
+    }
+
+    // Miscellaneous Splits
+    if (vars.Resolver.CheckFlag("SonicResonatorBlastShot") && settings["SonicResonatorBlastShot"]) return true;
+    if (vars.Resolver.CheckFlag("InteractWithSingleBed") && settings["InteractWithSingleBed"]) return true;
+    if (vars.Resolver.CheckFlag("FirstCraft") && settings["FirstCraft"] && vars.DoCraftSplit("FirstCraft")) return true;
+    if (vars.Resolver.CheckFlag("FirstScan") && settings["FirstScan"] && vars.DoCraftSplit("FirstScan")) return true;
+
+    // Habitat Builder Crafts Splits
+    if (vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatch"]) return true;
+    if (vars.Resolver.CheckFlag("BuildMoonpoolDock") && settings["BuildMoonpoolDock"]) return true;
+    if (vars.Resolver.CheckFlag("BuildVehicleFabricator") && settings["BuildVehicleFabricator"]) return true;
+    if (vars.Resolver.CheckFlag("BuildModificationStation") && settings["BuildModificationStation"]) return true;
+    if (vars.Resolver.CheckFlag("BuildProcessorStation") && settings["BuildProcessorStation"]) return true;
+    if (vars.Resolver.CheckFlag("BuildBioLabStation") && settings["BuildBioLabStation"]) return true;
+    if (vars.Resolver.CheckFlag("BuildAnyLockerThatHasALabel") && settings["BuildAnyLockerThatHasALabel"]) return true;
+    if (vars.Resolver.CheckFlag("BuildTailingChest") && settings["BuildTailingChest"]) return true;
+    if (vars.Resolver.CheckFlag("BuildWallRack") && settings["BuildWallRack"]) return true;
+    if (vars.Resolver.CheckFlag("BuildSmallCeilingLamp") && settings["BuildSmallCeilingLamp"]) return true;
+    if (vars.Resolver.CheckFlag("BuildRectangularCeilingLight") && settings["BuildRectangularCeilingLight"]) return true;
+    if (vars.Resolver.CheckFlag("BuildWallLightSmall") && settings["BuildWallLightSmall"]) return true;
+    if (vars.Resolver.CheckFlag("BuildAxumWallLight") && settings["BuildAxumWallLight"]) return true;
+    if (vars.Resolver.CheckFlag("BuildBatteryTerminal") && settings["BuildBatteryTerminal"]) return true;
+    if (vars.Resolver.CheckFlag("BuildBioreactor") && settings["BuildBioreactor"]) return true;
+    if (vars.Resolver.CheckFlag("BuildPowerStorage") && settings["BuildPowerStorage"]) return true;
+    if (vars.Resolver.CheckFlag("BuildBiobed") && settings["BuildBiobed"]) return true;
+    if (vars.Resolver.CheckFlag("BuildNoATerminal") && settings["BuildNoATerminal"]) return true;
+    if (vars.Resolver.CheckFlag("BuildScannerStation") && settings["BuildScannerStation"]) return true;
+    if (vars.Resolver.CheckFlag("BuildSolarPanel") && settings["BuildSolarPanel"]) return true;
+    if (vars.Resolver.CheckFlag("BuildHydroelectricTurbine") && settings["BuildHydroelectricTurbine"]) return true;
+    if (vars.Resolver.CheckFlag("BuildAndAttachPowerTransmitter") && settings["BuildAndAttachPowerTransmitter"]) return true;
+    if (vars.Resolver.CheckFlag("BuildAndAttachExteriorWallLight") && settings["BuildAndAttachExteriorWallLight"]) return true;
+    if (vars.Resolver.CheckFlag("BuildOREditHabitatBeacon") && settings["BuildOREditHabitatBeacon"]) return true;
+    if (vars.Resolver.CheckFlag("BuildWallUnitSmall") && settings["BuildWallUnitSmall"]) return true;
+    if (vars.Resolver.CheckFlag("BuildMetalFarm") && settings["BuildMetalFarm"]) return true;
+    if (vars.Resolver.CheckFlag("BuildPlantMimicPylon") && settings["BuildPlantMimicPylon"]) return true;
 }
 onStart
 {
@@ -224,6 +355,7 @@ onStart
     vars.ResetCraftSplits();
     vars.introCutsceneLoadRemovalActive = false;
     vars.creativeStartArmed = false;
+    vars.sonicResonatorBlastHatchArmed = false;
 }
 // Reset Checks
 reset
@@ -260,6 +392,7 @@ onReset
     vars.introCutsceneLoadRemovalActive = false;
     vars.ResetCraftSplits();
     vars.creativeStartArmed = false;
+    vars.sonicResonatorBlastHatchArmed = false;
 }
 // Listening to Update for load Removal
 isLoading
