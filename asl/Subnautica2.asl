@@ -4,13 +4,13 @@ state("Subnautica2-WinGDK-Shipping"){}
 startup
 {
     vars.ScriptVersion = "v1.0.7";
-    vars.MissingUhara = !File.Exists("Components/uhara10");
+    vars.MissingUhara = !File.Exists("Components/uharaSN2");
     if (vars.MissingUhara)
     {
         System.Windows.Forms.MessageBox.Show(
-            "Missing required file: Components/uhara10,\n" +
-            "Please Place uhara10 in your LiveSplit Components folder.\n" +
-            "https://github.com/ru-mii/uhara/raw/refs/heads/main/bin/uhara10",
+            "Missing required file: Components/uharaSN2,\n" +
+            "Please Place uharaSN2 in your LiveSplit Components folder.\n" +
+            "https://github.com/ItsFrostyYo/uhara/raw/refs/heads/main/bin/uharaSN2",
             "Subnautica 2 Autosplitter " + vars.ScriptVersion,
             System.Windows.Forms.MessageBoxButtons.OK,
             System.Windows.Forms.MessageBoxIcon.Error
@@ -18,7 +18,7 @@ startup
         return;
     }
 
-    Assembly.Load(File.ReadAllBytes("Components/uhara10")).CreateInstance("Main");
+    Assembly.Load(File.ReadAllBytes("Components/uharaSN2")).CreateInstance("Main");
     vars.Uhara.AlertLoadless(); // Sends Alert for using Game Time for Load Removal
 
     vars.introCutsceneLoadRemovalActive = false;
@@ -60,11 +60,6 @@ startup
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
         { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Lever Pressed (Intro)", "Any%Group" },
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Release (Intro)", "Any%Group" },
-        { "CraftHighCapacityTank", false, "Split on Crafting High Capacity O2 Tank (Glitchless)", "Any%Group" },
-        { "CraftFeedbackResonator", false, "Split on Crafting Feedback Resonator (Glitchless)", "Any%Group" },
-        { "CraftBioscanner", false, "Split on Craftng Bioscanner (Glitchless + NME)", "Any%Group" },
-        { "CraftScannerSplit", false, "Split on Crafting Scanner (Glitched)", "Any%Group" },
-        { "CraftAirbladder", false, "Split on Crafting Airbladder (Glitched)", "Any%Group" },
         { "BuildHatchAfterSonicResonator", false, "Split on Building Hatch after Sonic Resonator Blast (NME)", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
 
@@ -74,6 +69,145 @@ startup
         { "FirstScan", false, "Split on First Scan (Used for Rosetta Stone in Glitched)", "MiscellaneousSplitsGroup" },
         { "SonicResonatorBlastShot", false, "Split on Sonic Resonator Blast Shot", "MiscellaneousSplitsGroup" },
         { "InteractWithSingleBed", false, "Split on Interact with Single Bed", "MiscellaneousSplitsGroup" },
+
+        // Craft Splits Grouping
+        { "CraftSplitsGrouping", true, "Craft Splits", null },
+
+        // Fabricator Grouping
+        { "FabricatorGroup", true, "Fabricator", "CraftSplitsGrouping" },
+
+        // Personal Grouping
+        { "PersonalGroup", true, "Personal", "FabricatorGroup" },
+
+        // Equipment Grouping
+        { "EquipmentGroup", true, "Equipment", "PersonalGroup" },
+        // Equipment Individual Settings
+        { "Rebreather", false, "Split on Crafting Rebreather", "EquipmentGroup" },
+        { "BasicFins", false, "Split on Crafting Basic Fins", "EquipmentGroup" },
+        { "ImprovedFins", false, "Split on Crafting Improved Fins", "EquipmentGroup" },
+        { "StandardAirTank", false, "Split on Crafting Standard Air Tank", "EquipmentGroup" },
+        { "HighCapacityAirTank", false, "Split on Crafting High Capacity Air Tank", "EquipmentGroup" },
+        { "UltraHighCapacityAirTank", false, "Split on Crafting Ultra High Capacity Air Tank", "EquipmentGroup" },
+
+        // Tools Grouping
+        { "ToolsGroup", true, "Tools", "PersonalGroup" },
+        // Tools Individual Settings
+        { "SurvivalMultitool", false, "Split on Crafting Survival Multitool", "ToolsGroup" },
+        { "Flashlight", false, "Split on Crafting Flashlight", "ToolsGroup" },
+        { "Scanner", false, "Split on Crafting Scanner", "ToolsGroup" },
+        { "HabitatBuilder", false, "Split on Crafting Habitat Builder", "ToolsGroup" },
+        { "RepairTool", false, "Split on Crafting Repair Tool", "ToolsGroup" },
+        { "SonicResonator", false, "Split on Crafting Sonic Resonator", "ToolsGroup" },
+        { "Wakemaker", false, "Split on Crafting Wakemaker", "ToolsGroup" },
+        { "Airbladder", false, "Split on Crafting Airbladder", "ToolsGroup" },
+
+        // Resources Grouping
+        { "ResourcesGroup", true, "Resources", "FabricatorGroup" },
+
+        // Basic Materials Grouping
+        { "BasicMaterialsGroup", true, "Basic Materials", "ResourcesGroup" },
+        // Basic Materials Individual Settings
+        { "MildAcid", false, "Split on Crafting Mild Acid", "BasicMaterialsGroup" },
+        { "SalvagedTitanium", false, "Split on Crafting Salvaged Titanium", "BasicMaterialsGroup" },
+        { "Glass", false, "Split on Crafting Glass", "BasicMaterialsGroup" },
+        { "EnameledGlass", false, "Split on Crafting Enameled Glass", "BasicMaterialsGroup" },
+        { "Fiber", false, "Split on Crafting Fiber", "BasicMaterialsGroup" },
+        { "FiberMesh", false, "Split on Crafting Fiber Mesh", "BasicMaterialsGroup" },
+        { "Rubber", false, "Split on Crafting Rubber", "BasicMaterialsGroup" },
+        { "Grease", false, "Split on Crafting Grease", "BasicMaterialsGroup" },
+
+        // Electronics Grouping
+        { "ElectronicsGroup", true, "Electronics", "ResourcesGroup" },
+        // Electronics Individual Settings
+        { "BasicBattery", false, "Split on Crafting Basic Battery", "ElectronicsGroup" },
+        { "AdvancedBattery", false, "Split on Crafting Advanced Battery", "ElectronicsGroup" },
+        { "CopperWire", false, "Split on Crafting Copper Wire", "ElectronicsGroup" },
+        { "PowerCell", false, "Split on Crafting Power Cell", "ElectronicsGroup" },
+        { "EntangledPowerCell", false, "Split on Crafting Entangled Power Cell", "ElectronicsGroup" },
+        { "WiringKit", false, "Split on Crafting Wiring Kit", "ElectronicsGroup" },
+        { "AdvancedWiringKit", false, "Split on Crafting Advanced Wiring Kit", "ElectronicsGroup" },
+        { "SystemChip", false, "Split on Crafting System Chip", "ElectronicsGroup" },
+        { "DedicatedCore", false, "Split on Crafting Dedicated Core", "ElectronicsGroup" },
+
+        // Sustenance Grouping
+        { "SustenanceGroup", true, "Sustenance", "FabricatorGroup" },
+
+        // Prepared Meals Grouping
+        { "PreparedMealsGroup", true, "Prepared Meals", "SustenanceGroup" },
+        // Prepared Meals Individual Settings
+        { "SugarofSaturn", false, "Split on Crafting Sugar of Saturn", "PreparedMealsGroup" },
+        { "HalfmoonJerky", false, "Split on Crafting Halfmoon Jerky", "PreparedMealsGroup" },
+        { "ThreemoonTemaki", false, "Split on Crafting Threemoon Temaki", "PreparedMealsGroup" },
+        { "HoverthornSouvlaki", false, "Split on Crafting Hoverthorn Souvlaki", "PreparedMealsGroup" },
+        { "CherimoyaChutney", false, "Split on Crafting Cherimoya Chutney", "PreparedMealsGroup" },
+        { "Pavlova", false, "Split on Crafting Pavlova", "PreparedMealsGroup" },
+
+        // Cooked Food Grouping
+        { "CookedFoodGroup", true, "Cooked Food", "SustenanceGroup" },
+        // Cooked Food Individual Settings
+        { "CookedHalfmoon", false, "Split on Crafting Cooked Halfmoon", "CookedFoodGroup" },
+        { "OilySalad", false, "Split on Crafting Oily Salad", "CookedFoodGroup" },
+        { "CookedHarvestmoon", false, "Split on Crafting Cooked Harvestmoon", "CookedFoodGroup" },
+        { "CookedBluemoon", false, "Split on Crafting Cooked Bluemoon", "CookedFoodGroup" },
+        { "CookedQuadrate", false, "Split on Crafting Cooked Quadrate", "CookedFoodGroup" },
+        { "CookedGeordie", false, "Split on Crafting Cooked Geordie", "CookedFoodGroup" },
+        { "CookedElectricGeordie", false, "Split on Crafting Cooked Electric Geordie", "CookedFoodGroup" },
+        { "CookedHoverthorn", false, "Split on Crafting Cooked Hoverthorn", "CookedFoodGroup" },
+        { "CookedBlackHoverthorn", false, "Split on Crafting Cooked Black Hoverthorn", "CookedFoodGroup" },
+        { "CookedPneuma", false, "Split on Crafting Cooked Pneuma", "CookedFoodGroup" },
+        { "NutrientBlock", false, "Split on Crafting Nutrient Block", "CookedFoodGroup" },
+        { "CoralMash", false, "Split on Crafting Coral Mash", "CookedFoodGroup" },
+
+        // Water Grouping
+        { "WaterGroup", true, "Water", "SustenanceGroup" },
+        // Water Individual Settings
+        { "IsotonicWater", false, "Split on Crafting Isotonic Water", "WaterGroup" },
+        { "Water", false, "Split on Crafting Water", "WaterGroup" },
+
+        // Consumables Grouping
+        { "ConsumablesGroup", true, "Consumables", "FabricatorGroup" },
+
+        // Consumables Grouping
+        { "ConsumablesConsumablesGroup", true, "Consumables", "ConsumablesGroup" },
+        // Consumables Individual Settings
+        { "BasicFirstAidKit", false, "Split on Crafting Basic First Aid Kit", "ConsumablesConsumablesGroup" },
+        { "EnhancedFirstAidKit", false, "Split on Crafting Enhanced First Aid Kit", "ConsumablesConsumablesGroup" },
+        { "DistractionFlare", false, "Split on Crafting Distraction Flare", "ConsumablesConsumablesGroup" },
+
+        // Modification Station Grouping
+        { "ModificationStationGroup", true, "Modification Station", "CraftSplitsGrouping" },
+
+        // Tadpole Upgrade Modules Grouping
+        { "TadpoleUpgradeModulesGroup", true, "Tadpole Upgrade Modules", "ModificationStationGroup" },
+
+        // Tadpole Upgrade Modules Grouping
+        { "TadpoleUpgradeModulesTadpoleUpgradeModulesGroup", true, "Tadpole Upgrade Modules", "TadpoleUpgradeModulesGroup" },
+        // Tadpole Upgrade Modules Individual Settings
+        { "EngineEfficiency", false, "Split on Crafting Engine Efficiency", "TadpoleUpgradeModulesTadpoleUpgradeModulesGroup" },
+        { "StrikeArmor", false, "Split on Crafting Strike Armor", "TadpoleUpgradeModulesTadpoleUpgradeModulesGroup" },
+        { "CavitationMuffler", false, "Split on Crafting Cavitation Muffler", "TadpoleUpgradeModulesTadpoleUpgradeModulesGroup" },
+        { "PhotovoltaicCharger", false, "Split on Crafting Photovoltaic Charger", "TadpoleUpgradeModulesTadpoleUpgradeModulesGroup" },
+        { "TadpoleDepthModuleMk.1", false, "Split on Crafting Tadpole Depth Module Mk. 1", "TadpoleUpgradeModulesTadpoleUpgradeModulesGroup" },
+        { "TadpoleDepthModuleMk.2", false, "Split on Crafting Tadpole Depth Module Mk. 2", "TadpoleUpgradeModulesTadpoleUpgradeModulesGroup" },
+
+        // Prototype Tool Modifications Grouping
+        { "PrototypeToolModificationsGroup", true, "Prototype Tool Modifications", "ModificationStationGroup" },
+
+        // Prototype Tool Modifications Grouping
+        { "PrototypeToolModificationsPrototypeToolModificationsGroup", true, "Prototype Tool Modifications", "PrototypeToolModificationsGroup" },
+        // Prototype Tool Modifications Individual Settings
+        { "Bioscanner", false, "Split on Crafting Bioscanner", "PrototypeToolModificationsPrototypeToolModificationsGroup" },
+        { "FeedbackResonator", false, "Split on Crafting Feedback Resonator", "PrototypeToolModificationsPrototypeToolModificationsGroup" },
+
+        // Vehicle Fabricator Grouping
+        { "VehicleFabricatorGroup", true, "Vehicle Fabricator", "CraftSplitsGrouping" },
+
+        // Vehicles Grouping
+        { "VehiclesGroup", true, "Vehicles", "VehicleFabricatorGroup" },
+        // Vehicles Individual Settings
+        { "Tadpole", false, "Split on Crafting Tadpole", "VehiclesGroup" },
+        { "ScoutRayChassis", false, "Split on Crafting Scout Ray Chassis", "VehiclesGroup" },
+        { "TadpoleHaulChassis", false, "Split on Crafting Tadpole Haul Chassis", "VehiclesGroup" },
 
         // Habitat Builder Crafts Grouping
         { "HabitatBuilderCraftsGroup", true, "Habitat Builder Crafts", null },
@@ -175,12 +309,13 @@ init
     vars.Events.FunctionFlag("IntroUnlockStartingDoor", "BP_ComputerTextInterface_Terminal_C", "BP_ComputerTextInterface_Terminal_C_UAID_C87F54AE2B72FF0402", "OnWidgetPopped_Event");
     vars.Events.FunctionFlag("IntroLifepodLeftLeverPressed", "BP_LifepodBay_Lever_C", "BP_LifepodBay_Lever_C_UAID_14AC60D60A5A096C02", "BroadcastButtonPressed");
     vars.Events.FunctionFlag("IntroLifepodRightLeverPressed", "BP_LifepodBay_Chunk_Hatch_C", "BP_LifepodBay_Chunk_Hatch_C_UAID_14AC60D60A5A056C02", "RightLever");
-    vars.Events.FunctionFlag("CraftHighCapacityTank", "BP_OxygenTank_Medium_C", "BP_OxygenTank_Medium_C", "BPOnEquipped");
-    vars.Events.FunctionFlag("CraftFeedbackResonator", "BP_SonicResonatorV2_C", "BP_SonicResonatorV2_C", "ItemPickedUp");
-    vars.Events.FunctionFlag("CraftBioscanner", "BP_ScannerV2_C", "BP_ScannerV2_C", "ReceiveBeginPlay");
+    // Old Crafting Splits
+    // vars.Events.FunctionFlag("CraftHighCapacityTank", "BP_OxygenTank_Medium_C", "BP_OxygenTank_Medium_C", "BPOnEquipped");
+    // vars.Events.FunctionFlag("CraftFeedbackResonator", "BP_SonicResonatorV2_C", "BP_SonicResonatorV2_C", "ItemPickedUp");
+    // vars.Events.FunctionFlag("CraftBioscanner", "BP_ScannerV2_C", "BP_ScannerV2_C", "ReceiveBeginPlay");
     vars.Events.FunctionFlag("EndObservatoryButtonPress", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
-    vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "ReceiveBeginPlay");
-    vars.Events.FunctionFlag("CraftAirbladder", "BP_AirBladder_C", "BP_AirBladder_C", "ExecuteUbergraph_BP_AirBladder");
+    // vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "ReceiveBeginPlay");
+    // vars.Events.FunctionFlag("CraftAirbladder", "BP_AirBladder_C", "BP_AirBladder_C", "ExecuteUbergraph_BP_AirBladder");
     vars.Events.FunctionFlag("BuildHatchAfterSonicResonatorBlast", "GA_SonicResonator_Blast_C", "GA_SonicResonator_Blast_C", "OnCompleted_B65B54F241049DF1F76DA59AAF9E5B09");
 
     // Load Removal Event Listeners
@@ -192,6 +327,84 @@ init
     vars.Events.FunctionFlag("FirstScan", "GA_Scan_C", "GA_Scan_C", "OnCompleted_D22E6C2C4F34F79DF063E88A2D0679BA");
     vars.Events.FunctionFlag("SonicResonatorBlastShot", "GA_SonicResonator_Blast_C", "GA_SonicResonator_Blast_C", "OnCompleted_B65B54F241049DF1F76DA59AAF9E5B09");
     vars.Events.FunctionFlag("InteractWithSingleBed", "BP_BedSingle_C", "BP_BedSingle_C", "AttachEvent");
+
+    // Craft Splits Event Listeners
+    // Fabricator > Personal > Equipment Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("Rebreather", "DA_Rebreather_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("BasicFins", "DA_FinsRecipe");
+    vars.UharaSN2.CraftRecipeFlag("ImprovedFins", "DA_ImprovedFinsRecipe");
+    vars.UharaSN2.CraftRecipeFlag("StandardAirTank", "DA_SmallAirTankRecipe");
+    vars.UharaSN2.CraftRecipeFlag("HighCapacityAirTank", "DA_MediumAirTankRecipe");
+    vars.UharaSN2.CraftRecipeFlag("UltraHighCapacityAirTank", "DA_LargeAirTankRecipe");
+    // Fabricator > Personal > Tools Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("SurvivalMultitool", "DA_SurvivalMultiTool_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("Flashlight", "DA_FlashlightRecipe");
+    vars.UharaSN2.CraftRecipeFlag("Scanner", "DA_ScannerRecipe");
+    vars.UharaSN2.CraftRecipeFlag("HabitatBuilder", "DA_BuilderToolRecipe");
+    vars.UharaSN2.CraftRecipeFlag("RepairTool", "DA_RepairToolRecipe");
+    vars.UharaSN2.CraftRecipeFlag("SonicResonator", "DA_SonicResonatorRecipe");
+    vars.UharaSN2.CraftRecipeFlag("Wakemaker", "DA_WakemakerRecipe");
+    vars.UharaSN2.CraftRecipeFlag("Airbladder", "DA_AirBladderRecipe");
+    // Fabricator > Resources > Basic Materials Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("MildAcid", "DA_MildAcid_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("SalvagedTitanium", "DA_MetalSalvageRecipe");
+    vars.UharaSN2.CraftRecipeFlag("Glass", "DA_GlassRecipe");
+    vars.UharaSN2.CraftRecipeFlag("EnameledGlass", "DA_EnameledGlassRecipe");
+    vars.UharaSN2.CraftRecipeFlag("Fiber", "DA_FiberRecipe");
+    vars.UharaSN2.CraftRecipeFlag("FiberMesh", "DA_FiberMeshRecipe");
+    vars.UharaSN2.CraftRecipeFlag("Rubber", "DA_RubberRecipe");
+    vars.UharaSN2.CraftRecipeFlag("Grease", "DA_GreaseRecipe");
+    // Fabricator > Resources > Electronics Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("BasicBattery", "DA_BasicBatteryRecipe");
+    vars.UharaSN2.CraftRecipeFlag("AdvancedBattery", "DA_BatteryV2Recipe");
+    vars.UharaSN2.CraftRecipeFlag("CopperWire", "DA_CopperWireRecipe");
+    vars.UharaSN2.CraftRecipeFlag("PowerCell", "DA_PowerCellRecipe");
+    vars.UharaSN2.CraftRecipeFlag("EntangledPowerCell", "DA_PowerCellV2Recipe");
+    vars.UharaSN2.CraftRecipeFlag("WiringKit", "DA_WiringKitRecipe");
+    vars.UharaSN2.CraftRecipeFlag("AdvancedWiringKit", "DA_AdvancedWiringKitRecipe");
+    vars.UharaSN2.CraftRecipeFlag("SystemChip", "DA_ComputerChipRecipe");
+    vars.UharaSN2.CraftRecipeFlag("DedicatedCore", "DA_ComputerChipMk2Recipe");
+    // Fabricator > Sustenance > Prepared Meals Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("SugarofSaturn", "DA_SugarAnalog_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("HalfmoonJerky", "DA_HalfmoonJerkyRecipe");
+    vars.UharaSN2.CraftRecipeFlag("ThreemoonTemaki", "DA_ThreemoonTemakiRecipe");
+    vars.UharaSN2.CraftRecipeFlag("HoverthornSouvlaki", "DA_HoverthornSouvlaki_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("CherimoyaChutney", "DA_CherimoyaChutney_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("Pavlova", "DA_Pavlova_Recipe");
+    // Fabricator > Sustenance > Cooked Food Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("CookedHalfmoon", "DA_CookedHalfMoonRecipe");
+    vars.UharaSN2.CraftRecipeFlag("OilySalad", "DA_OilySalad_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("CookedHarvestmoon", "DA_CookedHarvestMoonRecipe");
+    vars.UharaSN2.CraftRecipeFlag("CookedBluemoon", "DA_CookedBlueMoonRecipe");
+    vars.UharaSN2.CraftRecipeFlag("CookedQuadrate", "DA_CookedQuadrateRecipe");
+    vars.UharaSN2.CraftRecipeFlag("CookedGeordie", "DA_CookedGeordieRecipe");
+    vars.UharaSN2.CraftRecipeFlag("CookedElectricGeordie", "DA_CookedElectricGeordieRecipe");
+    vars.UharaSN2.CraftRecipeFlag("CookedHoverthorn", "DA_CookedSpineyTail_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("CookedBlackHoverthorn", "DA_CookedSpineyTail_Variant01_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("CookedPneuma", "DA_CookedPneumoRecipe");
+    vars.UharaSN2.CraftRecipeFlag("NutrientBlock", "DA_NutrientBlockRecipe");
+    vars.UharaSN2.CraftRecipeFlag("CoralMash", "DA_CoralCookieRecipe");
+    // Fabricator > Sustenance > Water Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("IsotonicWater", "DA_IsotonicDrinkRecipe");
+    vars.UharaSN2.CraftRecipeFlag("Water", "DA_WaterRecipe");
+    // Fabricator > Consumables > Consumables Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("BasicFirstAidKit", "DA_BasicFirstAidKitRecipe");
+    vars.UharaSN2.CraftRecipeFlag("EnhancedFirstAidKit", "DA_FirstAidKit_Enhanced_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("DistractionFlare", "DA_FlareRecipe");
+    // Modification Station > Tadpole Upgrade Modules > Tadpole Upgrade Modules Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("EngineEfficiency", "DA_Tadpole_EngineEfficiency_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("StrikeArmor", "DA_Tadpole_HullReinforcement_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("CavitationMuffler", "DA_Tadpole_HydraulicMuffler_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("PhotovoltaicCharger", "DA_Tadpole_PhotovoltaicCharger_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("TadpoleDepthModuleMk.1", "DA_Tadpole_CrushDepthUpgrade_01_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("TadpoleDepthModuleMk.2", "DA_Tadpole_CrushDepthUpgrade_02_Recipe");
+    // Modification Station > Prototype Tool Modifications > Prototype Tool Modifications Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("Bioscanner", "DA_ScannerV2Recipe");
+    vars.UharaSN2.CraftRecipeFlag("FeedbackResonator", "DA_SonicResonatorV2Recipe");
+    // Vehicle Fabricator > Vehicles Craft Recipe Event Listeners
+    vars.UharaSN2.CraftRecipeFlag("Tadpole", "DA_TadpoleRecipe");
+    vars.UharaSN2.CraftRecipeFlag("ScoutRayChassis", "DA_Tadpole_ScoutRay_Chassis_Recipe");
+    vars.UharaSN2.CraftRecipeFlag("TadpoleHaulChassis", "DA_Tadpole_HAUL_Chassis_Recipe");
 
     // Habitat Builder Crafts Event Listeners
     vars.Events.FunctionFlag("BuildHatch", "BP_BaseHatch_C", "BP_BaseHatch_C", "BndEvt__BP_BaseHatch_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
@@ -320,6 +533,84 @@ split
     if (vars.Resolver.CheckFlag("InteractWithSingleBed") && settings["InteractWithSingleBed"]) return true;
     if (vars.Resolver.CheckFlag("FirstCraft") && settings["FirstCraft"] && vars.DoCraftSplit("FirstCraft")) return true;
     if (vars.Resolver.CheckFlag("FirstScan") && settings["FirstScan"] && vars.DoCraftSplit("FirstScan")) return true;
+
+    // Craft Splits
+    // Fabricator > Personal > Equipment Splits
+    if (vars.UharaSN2.CraftRecipeFlag("Rebreather") && settings["Rebreather"] && vars.DoCraftSplit("Rebreather")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("BasicFins") && settings["BasicFins"] && vars.DoCraftSplit("BasicFins")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("ImprovedFins") && settings["ImprovedFins"] && vars.DoCraftSplit("ImprovedFins")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("StandardAirTank") && settings["StandardAirTank"] && vars.DoCraftSplit("StandardAirTank")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("HighCapacityAirTank") && settings["HighCapacityAirTank"] && vars.DoCraftSplit("HighCapacityAirTank")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("UltraHighCapacityAirTank") && settings["UltraHighCapacityAirTank"] && vars.DoCraftSplit("UltraHighCapacityAirTank")) return true;
+    // Fabricator > Personal > Tools Splits
+    if (vars.UharaSN2.CraftRecipeFlag("SurvivalMultitool") && settings["SurvivalMultitool"] && vars.DoCraftSplit("SurvivalMultitool")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Flashlight") && settings["Flashlight"] && vars.DoCraftSplit("Flashlight")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Scanner") && settings["Scanner"] && vars.DoCraftSplit("Scanner")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("HabitatBuilder") && settings["HabitatBuilder"] && vars.DoCraftSplit("HabitatBuilder")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("RepairTool") && settings["RepairTool"] && vars.DoCraftSplit("RepairTool")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("SonicResonator") && settings["SonicResonator"] && vars.DoCraftSplit("SonicResonator")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Wakemaker") && settings["Wakemaker"] && vars.DoCraftSplit("Wakemaker")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Airbladder") && settings["Airbladder"] && vars.DoCraftSplit("Airbladder")) return true;
+    // Fabricator > Resources > Basic Materials Splits
+    if (vars.UharaSN2.CraftRecipeFlag("MildAcid") && settings["MildAcid"] && vars.DoCraftSplit("MildAcid")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("SalvagedTitanium") && settings["SalvagedTitanium"] && vars.DoCraftSplit("SalvagedTitanium")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Glass") && settings["Glass"] && vars.DoCraftSplit("Glass")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("EnameledGlass") && settings["EnameledGlass"] && vars.DoCraftSplit("EnameledGlass")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Fiber") && settings["Fiber"] && vars.DoCraftSplit("Fiber")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("FiberMesh") && settings["FiberMesh"] && vars.DoCraftSplit("FiberMesh")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Rubber") && settings["Rubber"] && vars.DoCraftSplit("Rubber")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Grease") && settings["Grease"] && vars.DoCraftSplit("Grease")) return true;
+    // Fabricator > Resources > Electronics Splits
+    if (vars.UharaSN2.CraftRecipeFlag("BasicBattery") && settings["BasicBattery"] && vars.DoCraftSplit("BasicBattery")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("AdvancedBattery") && settings["AdvancedBattery"] && vars.DoCraftSplit("AdvancedBattery")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CopperWire") && settings["CopperWire"] && vars.DoCraftSplit("CopperWire")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("PowerCell") && settings["PowerCell"] && vars.DoCraftSplit("PowerCell")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("EntangledPowerCell") && settings["EntangledPowerCell"] && vars.DoCraftSplit("EntangledPowerCell")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("WiringKit") && settings["WiringKit"] && vars.DoCraftSplit("WiringKit")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("AdvancedWiringKit") && settings["AdvancedWiringKit"] && vars.DoCraftSplit("AdvancedWiringKit")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("SystemChip") && settings["SystemChip"] && vars.DoCraftSplit("SystemChip")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("DedicatedCore") && settings["DedicatedCore"] && vars.DoCraftSplit("DedicatedCore")) return true;
+    // Fabricator > Sustenance > Prepared Meals Splits
+    if (vars.UharaSN2.CraftRecipeFlag("SugarofSaturn") && settings["SugarofSaturn"] && vars.DoCraftSplit("SugarofSaturn")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("HalfmoonJerky") && settings["HalfmoonJerky"] && vars.DoCraftSplit("HalfmoonJerky")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("ThreemoonTemaki") && settings["ThreemoonTemaki"] && vars.DoCraftSplit("ThreemoonTemaki")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("HoverthornSouvlaki") && settings["HoverthornSouvlaki"] && vars.DoCraftSplit("HoverthornSouvlaki")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CherimoyaChutney") && settings["CherimoyaChutney"] && vars.DoCraftSplit("CherimoyaChutney")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Pavlova") && settings["Pavlova"] && vars.DoCraftSplit("Pavlova")) return true;
+    // Fabricator > Sustenance > Cooked Food Splits
+    if (vars.UharaSN2.CraftRecipeFlag("CookedHalfmoon") && settings["CookedHalfmoon"] && vars.DoCraftSplit("CookedHalfmoon")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("OilySalad") && settings["OilySalad"] && vars.DoCraftSplit("OilySalad")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CookedHarvestmoon") && settings["CookedHarvestmoon"] && vars.DoCraftSplit("CookedHarvestmoon")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CookedBluemoon") && settings["CookedBluemoon"] && vars.DoCraftSplit("CookedBluemoon")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CookedQuadrate") && settings["CookedQuadrate"] && vars.DoCraftSplit("CookedQuadrate")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CookedGeordie") && settings["CookedGeordie"] && vars.DoCraftSplit("CookedGeordie")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CookedElectricGeordie") && settings["CookedElectricGeordie"] && vars.DoCraftSplit("CookedElectricGeordie")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CookedHoverthorn") && settings["CookedHoverthorn"] && vars.DoCraftSplit("CookedHoverthorn")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CookedBlackHoverthorn") && settings["CookedBlackHoverthorn"] && vars.DoCraftSplit("CookedBlackHoverthorn")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CookedPneuma") && settings["CookedPneuma"] && vars.DoCraftSplit("CookedPneuma")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("NutrientBlock") && settings["NutrientBlock"] && vars.DoCraftSplit("NutrientBlock")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CoralMash") && settings["CoralMash"] && vars.DoCraftSplit("CoralMash")) return true;
+    // Fabricator > Sustenance > Water Splits
+    if (vars.UharaSN2.CraftRecipeFlag("IsotonicWater") && settings["IsotonicWater"] && vars.DoCraftSplit("IsotonicWater")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("Water") && settings["Water"] && vars.DoCraftSplit("Water")) return true;
+    // Fabricator > Consumables > Consumables Splits
+    if (vars.UharaSN2.CraftRecipeFlag("BasicFirstAidKit") && settings["BasicFirstAidKit"] && vars.DoCraftSplit("BasicFirstAidKit")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("EnhancedFirstAidKit") && settings["EnhancedFirstAidKit"] && vars.DoCraftSplit("EnhancedFirstAidKit")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("DistractionFlare") && settings["DistractionFlare"] && vars.DoCraftSplit("DistractionFlare")) return true;
+    // Modification Station > Tadpole Upgrade Modules > Tadpole Upgrade Modules Splits
+    if (vars.UharaSN2.CraftRecipeFlag("EngineEfficiency") && settings["EngineEfficiency"] && vars.DoCraftSplit("EngineEfficiency")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("StrikeArmor") && settings["StrikeArmor"] && vars.DoCraftSplit("StrikeArmor")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("CavitationMuffler") && settings["CavitationMuffler"] && vars.DoCraftSplit("CavitationMuffler")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("PhotovoltaicCharger") && settings["PhotovoltaicCharger"] && vars.DoCraftSplit("PhotovoltaicCharger")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("TadpoleDepthModuleMk.1") && settings["TadpoleDepthModuleMk.1"] && vars.DoCraftSplit("TadpoleDepthModuleMk.1")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("TadpoleDepthModuleMk.2") && settings["TadpoleDepthModuleMk.2"] && vars.DoCraftSplit("TadpoleDepthModuleMk.2")) return true;
+    // Modification Station > Prototype Tool Modifications > Prototype Tool Modifications Splits
+    if (vars.UharaSN2.CraftRecipeFlag("Bioscanner") && settings["Bioscanner"] && vars.DoCraftSplit("Bioscanner")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("FeedbackResonator") && settings["FeedbackResonator"] && vars.DoCraftSplit("FeedbackResonator")) return true;
+    // Vehicle Fabricator > Vehicles Splits
+    if (vars.UharaSN2.CraftRecipeFlag("Tadpole") && settings["Tadpole"] && vars.DoCraftSplit("Tadpole")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("ScoutRayChassis") && settings["ScoutRayChassis"] && vars.DoCraftSplit("ScoutRayChassis")) return true;
+    if (vars.UharaSN2.CraftRecipeFlag("TadpoleHaulChassis") && settings["TadpoleHaulChassis"] && vars.DoCraftSplit("TadpoleHaulChassis")) return true;
 
     // Habitat Builder Crafts Splits
     if (vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatch"] && vars.DoCraftSplit("BuildHatch")) return true;
