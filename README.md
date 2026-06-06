@@ -74,6 +74,12 @@ The current split groups are:
 
 The crafting-related split settings are one-time per attempt.
 
+#### Craft Splits
+
+There is also a `Craft Splits` section with specific craft splits per Item, grouped by build menu category.
+
+The Craft Splits are one-time per attempt.
+
 #### Habitat Builder Crafts
 
 There is also a `Habitat Builder Crafts` section with specific builder placement splits, grouped by build menu category.
