@@ -57,11 +57,6 @@ The current split groups are:
 - `Split on Analyze Button Press` Splits on the intro analyze/scanning button press.
 - `Split on Lifepod Left Lever Pressed` Splits when the left lifepod lever is pressed.
 - `Split on Lifepod Right Lever Pressed` Splits when the right lifepod right lever event is hit.
-- `Split on Crafting High Capacity O2 Tank` Splits when the High Capacity O2 Tank equip/craft event is hit.
-- `Split on Crafting Feedback Resonator` Splits when the Feedback Resonator craft/pickup event is hit.
-- `Split on Craftng Bioscanner` Splits when the Bioscanner craft/equip event is hit.
-- `Split on Crafting Scanner` Splits when the Scanner equip event is hit.
-- `Split on Crafting Airbladder` Splits when the Airbladder event is hit.
 - `Split on Building Hatch after Sonic Resonator` Arms on Sonic Resonator Blast Shot, then splits on the next Hatch build after that.
 - `Split on Observatory Button (End)` Splits on the end Observatory button press.
 
