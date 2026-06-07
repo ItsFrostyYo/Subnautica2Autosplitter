@@ -63,8 +63,8 @@ startup
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
         { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Lever Pressed (Intro)", "Any%Group" },
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Release (Intro)", "Any%Group" },
-        { "BuildHatchAfterTadpole", false, "Split on Building Hatch after Tadpole", "Any%Group" },
-        { "BuildHatchAfterHighCapacityTank", false, "Split on Building Hatch after High Capacity Tank", "Any%Group" },
+        { "BuildHatchAfterTadpole", false, "Split on 2nd Base (NME) [Building Hatch after Tadpole]", "Any%Group" },
+        { "BuildHatchAfterHighCapacityTank", false, "Split on 2nd Base (Glitchless) [Building Hatch after High Capacity Tank]", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
