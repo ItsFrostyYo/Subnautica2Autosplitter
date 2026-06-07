@@ -41,16 +41,18 @@ startup
 
     dynamic[,] _settings =
     {
-        // Creative Start Grouping
-        { "CreativeStartGroup", true, "Creative Start Types", null },
-        { "CreativeStartLoadIn", true, "Start on Load In (Leaderboard)", "CreativeStartGroup" },
-        { "CreativeStartFirstInteractMovement", false, "Start on First Interact or Movement (Experimental)", "CreativeStartGroup" },
+        // Load Removal Testing Grouping
+        //{ "ExperimentalGrouping", true, "Experimental Features (Not Leaderboard Legal)", null },
+        //{ "RespawnLoadRemoval", false, "Unstuck/Death Respawn Load Removal", "ExperimentalGrouping" },
+        //{ "CreativeStartFirstInteractMovement", false, "Creative Start on First Interact or Movement", "ExperimentalGrouping" },
+        //{ "EnableGSyncLoadRemoval", false, "Enable GSync Load Removal", "ExperimentalGrouping" },
 
         // Reset Grouping
         { "ResetGroup", true, "Reset Types", null },
         { "ResetOnMainMenu", false, "Reset on Main Menu", "ResetGroup" },
         { "ResetOnNewGameSurvival", false, "Reset on New Game Start (Survival)", "ResetGroup" },
         { "ResetOnNewGameCreative", false, "Reset on New Game Start (Creative)", "ResetGroup" },
+
 
         // Any% Splits Grouping
         { "Any%Group", true, "Any% Splits (Survival & Creative) + (Glitched & Glitchless)", null },
@@ -61,8 +63,8 @@ startup
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
         { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Lever Pressed (Intro)", "Any%Group" },
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Release (Intro)", "Any%Group" },
-        { "BuildHatchAfterTadpole", false, "Split on Building Hatch after Tadpole (NME)", "Any%Group" },
-        { "BuildHatchAfterHighCapacityTank", false, "Split on Building Hatch after High Capacity Tank (Glitchless)", "Any%Group" },
+        { "BuildHatchAfterTadpole", false, "Split on Building Hatch after Tadpole", "Any%Group" },
+        { "BuildHatchAfterHighCapacityTank", false, "Split on Building Hatch after High Capacity Tank", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
@@ -290,7 +292,7 @@ init
     if (vars.Utils.GEngine != IntPtr.Zero) vars.Uhara.Log("GEngine found at " + vars.Utils.GEngine.ToString("X"));
     if (vars.Utils.GWorld != IntPtr.Zero) vars.Uhara.Log("GWorld found at " + vars.Utils.GWorld.ToString("X")); 
     if (vars.Utils.FNames != IntPtr.Zero) vars.Uhara.Log("FNames found at " + vars.Utils.FNames.ToString("X"));
-    // vars.Resolver.Watch<bool>("GSync", vars.Utils.GSync); // Temporary Disable GSync
+    //vars.Resolver.Watch<bool>("GSync", vars.Utils.GSync);
     
     // Start/Reset Event Listeners
     vars.Events.FunctionFlag("SurvivalStart","BPC_SN2SyncedAnimation_C", "BPC_SN2SyncedAnimation", "OnInterrupted_6CE57B834482AC68669FA3BD7C032291");
@@ -322,6 +324,8 @@ init
     // Load Removal Event Listeners
     vars.Events.FunctionFlag("IntroLifepodAscend", "BP_NarrativeSignal_C", "BP_NarrativeSignal_C_UAID_60CF846429E036A502", "OnUnlocked_62920D1448BD71509596E5B554437304");
     vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
+    //vars.Events.FunctionFlag("RespawnLoadRemovalStart", "WBP_RespawnScreen_C", "WBP_RespawnScreen_C", "BndEvt__WBP_RespawnScreen_BackButton_K2Node_ComponentBoundEvent_0_CommonButtonBaseClicked__DelegateSignature");
+    //vars.Events.FunctionFlag("RespawnLoadRemovalStartEnd", "WBP_RespawnScreen_C", "WBP_RespawnScreen_C", "ExecuteUbergraph_WBP_RespawnScreen");
 
     // Miscellaneous Event Listeners
     vars.Events.FunctionFlag("FirstCraft", "ABP_Fabricator_C", "ABP_Fabricator_C2", "OnCraftingStarted_Event");
@@ -460,17 +464,20 @@ start
     
     if (vars.Resolver.CheckFlag("CreativeStartArm"))
     {
-        // If both are enabled, Load In wins and starts immediately.
-        if (settings["CreativeStartLoadIn"])
+        vars.introCutsceneLoadRemovalActive = false;
+        vars.ResetCraftSplits();
+        vars.hatchAfterTadpoleArmed = false;
+        vars.hatchAfterHighCapacityTankArmed = false;
+
+        if (settings["CreativeStartFirstInteractMovement"])
         {
-            vars.introCutsceneLoadRemovalActive = false;
-            vars.ResetCraftSplits();
+            vars.creativeStartArmed = true;
+        }
+        else
+        {
             vars.creativeStartArmed = false;
             return true;
         }
-
-        if (settings["CreativeStartFirstInteractMovement"])
-            vars.creativeStartArmed = true;
     }
 
     if (vars.creativeStartArmed && (
@@ -506,6 +513,12 @@ update
 
     if (vars.Resolver.CheckFlag("IntroCutsceneLoadRemovalEnd"))
         vars.introCutsceneLoadRemovalActive = false;
+
+    //if (settings["RespawnLoadRemoval"] && vars.Resolver.CheckFlag("RespawnLoadRemovalStart"))
+    //    vars.introCutsceneLoadRemovalActive = true;
+
+    //if (settings["RespawnLoadRemoval"] && vars.Resolver.CheckFlag("RespawnLoadRemovalStartEnd"))
+    //    vars.introCutsceneLoadRemovalActive = false;
 
     if (vars.UharaSN2.CraftRecipeFlag("Tadpole"))
         vars.hatchAfterTadpoleArmed = true;
@@ -711,5 +724,5 @@ isLoading
     if (vars.MissingUhara) return false;
 
     return vars.introCutsceneLoadRemovalActive;
-    // return vars.introCutsceneLoadRemovalActive || current.GSync; // Temporary Disable GSync
+    // return vars.introCutsceneLoadRemovalActive || (settings["EnableGSyncLoadRemoval"] && current.GSync);
 }
