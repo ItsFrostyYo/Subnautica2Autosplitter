@@ -65,6 +65,7 @@ startup
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Release (Intro)", "Any%Group" },
         { "BuildHatchAfterTadpole", false, "Split on 2nd Base (NME) [Building Hatch after Tadpole]", "Any%Group" },
         { "BuildHatchAfterHighCapacityTank", false, "Split on 2nd Base (Glitchless) [Building Hatch after High Capacity Tank]", "Any%Group" },
+        { "RosettaStoneUnlock", false, "Rosetta Stone Scan", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
@@ -442,6 +443,8 @@ init
     // [NOT SAFE DONT ADD] Splits on Build Time of Day Display OR Time of Day Display Has new Day Changed [WBP_TimeOfDayTracker_C] [WBP_TimeOfDayTracker_C] [HandleDayPhaseChanged]
     // [NOT SAFE DONT ADD] Build Thermal Plant [BP_ThermalPlant_C] [BP_ThermalPlant_C] [ExecuteUbergraph_BP_ThermalPlant]
 
+    vars.UharaSN2.UnlockFlag("RosettaStoneUnlock", "DA_Rosetta_TranslationUnlocked_StoryGoal");
+
     vars.introCutsceneLoadRemovalActive = false;
     vars.creativeStartArmed = false;
     vars.hatchAfterTadpoleArmed = false;
@@ -667,6 +670,10 @@ split
     if (vars.Resolver.CheckFlag("BuildWallUnitSmall") && settings["BuildWallUnitSmall"] && vars.DoCraftSplit("BuildWallUnitSmall")) return true;
     if (vars.Resolver.CheckFlag("BuildMetalFarm") && settings["BuildMetalFarm"] && vars.DoCraftSplit("BuildMetalFarm")) return true;
     if (vars.Resolver.CheckFlag("BuildPlantMimicPylon") && settings["BuildPlantMimicPylon"] && vars.DoCraftSplit("BuildPlantMimicPylon")) return true;
+
+    // Other Splits
+    if (vars.UharaSN2.UnlockFlag("RosettaStoneUnlock") && settings["RosettaStoneUnlock"] && vars.DoCraftSplit("RosettaStoneUnlock")) return true;
+
 }
 onStart
 {
