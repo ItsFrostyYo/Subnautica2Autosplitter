@@ -544,12 +544,12 @@ split
     if (vars.Resolver.CheckFlag("CraftScannerSplit") && settings["CraftScannerSplit"] && vars.DoCraftSplit("CraftScannerSplit")) return true;
     if (vars.Resolver.CheckFlag("CraftAirbladder") && settings["CraftAirbladder"] && vars.DoCraftSplit("CraftAirbladder")) return true;
     if (vars.Resolver.CheckFlag("IntroUnlockStartingDoor") && settings["IntroUnlockStartingDoor"] && vars.DoCraftSplit("IntroUnlockStartingDoor")) return true;
-    if (vars.hatchAfterTadpoleArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterTadpole"])
+    if (vars.hatchAfterTadpoleArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterTadpole"] && vars.DoCraftSplit("BuildHatchAfterTadpole"))
     {
         vars.hatchAfterTadpoleArmed = false;
         return true;
     }
-    if (vars.hatchAfterHighCapacityTankArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterHighCapacityTank"])
+    if (vars.hatchAfterHighCapacityTankArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterHighCapacityTank"] && vars.DoCraftSplit("BuildHatchAfterHighCapacityTank"))
     {
         vars.hatchAfterHighCapacityTankArmed = false;
         return true;
