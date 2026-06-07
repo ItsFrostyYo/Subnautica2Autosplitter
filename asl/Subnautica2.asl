@@ -23,7 +23,8 @@ startup
 
     vars.introCutsceneLoadRemovalActive = false;
     vars.creativeStartArmed = false;
-    vars.sonicResonatorBlastHatchArmed = false;
+    vars.hatchAfterTadpoleArmed = false;
+    vars.hatchAfterHighCapacityTankArmed = false;
     vars.CompletedCraftSplits = new HashSet<string>();
 
     vars.DoCraftSplit = (Func<string, bool>)((key) =>
@@ -60,7 +61,8 @@ startup
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
         { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Lever Pressed (Intro)", "Any%Group" },
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Release (Intro)", "Any%Group" },
-        { "BuildHatchAfterSonicResonator", false, "Split on Building Hatch after Sonic Resonator Blast (NME)", "Any%Group" },
+        { "BuildHatchAfterTadpole", false, "Split on Building Hatch after Tadpole (NME)", "Any%Group" },
+        { "BuildHatchAfterHighCapacityTank", false, "Split on Building Hatch after High Capacity Tank (Glitchless)", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
 
         // Miscellaneous Splits Grouping
@@ -316,7 +318,6 @@ init
     vars.Events.FunctionFlag("EndObservatoryButtonPress", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
     // vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "ReceiveBeginPlay");
     // vars.Events.FunctionFlag("CraftAirbladder", "BP_AirBladder_C", "BP_AirBladder_C", "ExecuteUbergraph_BP_AirBladder");
-    vars.Events.FunctionFlag("BuildHatchAfterSonicResonatorBlast", "GA_SonicResonator_Blast_C", "GA_SonicResonator_Blast_C", "OnCompleted_B65B54F241049DF1F76DA59AAF9E5B09");
 
     // Load Removal Event Listeners
     vars.Events.FunctionFlag("IntroLifepodAscend", "BP_NarrativeSignal_C", "BP_NarrativeSignal_C_UAID_60CF846429E036A502", "OnUnlocked_62920D1448BD71509596E5B554437304");
@@ -439,7 +440,8 @@ init
 
     vars.introCutsceneLoadRemovalActive = false;
     vars.creativeStartArmed = false;
-    vars.sonicResonatorBlastHatchArmed = false;
+    vars.hatchAfterTadpoleArmed = false;
+    vars.hatchAfterHighCapacityTankArmed = false;
 }
 // Start Checks
 start
@@ -451,6 +453,8 @@ start
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
         vars.creativeStartArmed = false;
+        vars.hatchAfterTadpoleArmed = false;
+        vars.hatchAfterHighCapacityTankArmed = false;
         return true;
     }
     
@@ -483,6 +487,8 @@ start
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
         vars.creativeStartArmed = false;
+        vars.hatchAfterTadpoleArmed = false;
+        vars.hatchAfterHighCapacityTankArmed = false;
         return true;
     }
 
@@ -501,8 +507,11 @@ update
     if (vars.Resolver.CheckFlag("IntroCutsceneLoadRemovalEnd"))
         vars.introCutsceneLoadRemovalActive = false;
 
-    if (vars.Resolver.CheckFlag("BuildHatchAfterSonicResonatorBlast"))
-        vars.sonicResonatorBlastHatchArmed = true;
+    if (vars.UharaSN2.CraftRecipeFlag("Tadpole"))
+        vars.hatchAfterTadpoleArmed = true;
+
+    if (vars.UharaSN2.CraftRecipeFlag("HighCapacityAirTank"))
+        vars.hatchAfterHighCapacityTankArmed = true;
 }
 // Split Checks
 split
@@ -522,9 +531,14 @@ split
     if (vars.Resolver.CheckFlag("CraftScannerSplit") && settings["CraftScannerSplit"] && vars.DoCraftSplit("CraftScannerSplit")) return true;
     if (vars.Resolver.CheckFlag("CraftAirbladder") && settings["CraftAirbladder"] && vars.DoCraftSplit("CraftAirbladder")) return true;
     if (vars.Resolver.CheckFlag("IntroUnlockStartingDoor") && settings["IntroUnlockStartingDoor"] && vars.DoCraftSplit("IntroUnlockStartingDoor")) return true;
-    if (vars.sonicResonatorBlastHatchArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterSonicResonator"])
+    if (vars.hatchAfterTadpoleArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterTadpole"])
     {
-        vars.sonicResonatorBlastHatchArmed = false;
+        vars.hatchAfterTadpoleArmed = false;
+        return true;
+    }
+    if (vars.hatchAfterHighCapacityTankArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterHighCapacityTank"])
+    {
+        vars.hatchAfterHighCapacityTankArmed = false;
         return true;
     }
 
@@ -648,7 +662,8 @@ onStart
     vars.ResetCraftSplits();
     vars.introCutsceneLoadRemovalActive = false;
     vars.creativeStartArmed = false;
-    vars.sonicResonatorBlastHatchArmed = false;
+    vars.hatchAfterTadpoleArmed = false;
+    vars.hatchAfterHighCapacityTankArmed = false;
 }
 // Reset Checks
 reset
@@ -660,6 +675,8 @@ reset
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
         vars.creativeStartArmed = false;
+        vars.hatchAfterTadpoleArmed = false;
+        vars.hatchAfterHighCapacityTankArmed = false;
         return true;
     }
     if (vars.Resolver.CheckFlag("SurvivalStart") && settings["ResetOnNewGameSurvival"])
@@ -685,7 +702,8 @@ onReset
     vars.introCutsceneLoadRemovalActive = false;
     vars.ResetCraftSplits();
     vars.creativeStartArmed = false;
-    vars.sonicResonatorBlastHatchArmed = false;
+    vars.hatchAfterTadpoleArmed = false;
+    vars.hatchAfterHighCapacityTankArmed = false;
 }
 // Listening to Update for load Removal
 isLoading
