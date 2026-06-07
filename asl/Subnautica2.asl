@@ -71,7 +71,7 @@ startup
         // Miscellaneous Splits Grouping
         { "MiscellaneousSplitsGroup", true, "Miscellaneous Splits", null },
         { "FirstCraft", false, "Split on First Craft", "MiscellaneousSplitsGroup" },
-        { "FirstScan", false, "Split on First Scan (Used for Rosetta Stone in Glitched)", "MiscellaneousSplitsGroup" },
+        { "FirstScan", false, "Split on First Scan", "MiscellaneousSplitsGroup" },
         { "SonicResonatorBlastShot", false, "Split on Sonic Resonator Blast Shot", "MiscellaneousSplitsGroup" },
         { "InteractWithSingleBed", false, "Split on Interact with Single Bed", "MiscellaneousSplitsGroup" },
 
