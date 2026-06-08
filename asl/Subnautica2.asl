@@ -320,12 +320,12 @@ init
     vars.Events.FunctionFlag("IntroLifepodLeftLeverPressed", "BP_LifepodBay_Lever_C", "BP_LifepodBay_Lever_C_UAID_14AC60D60A5A096C02", "BroadcastButtonPressed");
     vars.Events.FunctionFlag("IntroLifepodRightLeverPressed", "BP_LifepodBay_Chunk_Hatch_C", "BP_LifepodBay_Chunk_Hatch_C_UAID_14AC60D60A5A056C02", "RightLever");
     // Old Crafting Splits
-    // vars.Events.FunctionFlag("CraftHighCapacityTank", "BP_OxygenTank_Medium_C", "BP_OxygenTank_Medium_C", "BPOnEquipped");
-    // vars.Events.FunctionFlag("CraftFeedbackResonator", "BP_SonicResonatorV2_C", "BP_SonicResonatorV2_C", "ItemPickedUp");
-    // vars.Events.FunctionFlag("CraftBioscanner", "BP_ScannerV2_C", "BP_ScannerV2_C", "ReceiveBeginPlay");
+    vars.Events.FunctionFlag("CraftHighCapacityTank", "BP_OxygenTank_Medium_C", "BP_OxygenTank_Medium_C", "BPOnEquipped");
+    vars.Events.FunctionFlag("CraftFeedbackResonator", "BP_SonicResonatorV2_C", "BP_SonicResonatorV2_C", "ItemPickedUp");
+    vars.Events.FunctionFlag("CraftBioscanner", "BP_ScannerV2_C", "BP_ScannerV2_C", "ReceiveBeginPlay");
     vars.Events.FunctionFlag("EndObservatoryButtonPress", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
-    // vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "ReceiveBeginPlay");
-    // vars.Events.FunctionFlag("CraftAirbladder", "BP_AirBladder_C", "BP_AirBladder_C", "ExecuteUbergraph_BP_AirBladder");
+    vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "ReceiveBeginPlay");
+    vars.Events.FunctionFlag("CraftAirbladder", "BP_AirBladder_C", "BP_AirBladder_C", "ExecuteUbergraph_BP_AirBladder");
 
     // Load Removal Event Listeners
     vars.Events.FunctionFlag("IntroLifepodAscend", "BP_NarrativeSignal_C", "BP_NarrativeSignal_C_UAID_60CF846429E036A502", "OnUnlocked_62920D1448BD71509596E5B554437304");
@@ -548,12 +548,7 @@ split
     if (vars.Resolver.CheckFlag("IntroButtonPress") && settings["IntroButtonPress"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodLeftLeverPressed") && settings["IntroLifepodLeftLeverPressed"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodRightLeverPressed") && settings["IntroLifepodRightLeverPressed"]) return true;
-    if (vars.Resolver.CheckFlag("CraftHighCapacityTank") && settings["CraftHighCapacityTank"] && vars.DoCraftSplit("CraftHighCapacityTank")) return true;
-    if (vars.Resolver.CheckFlag("CraftFeedbackResonator") && settings["CraftFeedbackResonator"] && vars.DoCraftSplit("CraftFeedbackResonator")) return true;
-    if (vars.Resolver.CheckFlag("CraftBioscanner") && settings["CraftBioscanner"] && vars.DoCraftSplit("CraftBioscanner")) return true;
     if (vars.Resolver.CheckFlag("EndObservatoryButtonPress") && settings["EndObservatoryButtonPress"]) return true;
-    if (vars.Resolver.CheckFlag("CraftScannerSplit") && settings["CraftScannerSplit"] && vars.DoCraftSplit("CraftScannerSplit")) return true;
-    if (vars.Resolver.CheckFlag("CraftAirbladder") && settings["CraftAirbladder"] && vars.DoCraftSplit("CraftAirbladder")) return true;
     if (vars.Resolver.CheckFlag("IntroUnlockStartingDoor") && settings["IntroUnlockStartingDoor"] && vars.DoCraftSplit("IntroUnlockStartingDoor")) return true;
     if (vars.hatchAfterTadpoleArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterTadpole"] && vars.DoCraftSplit("BuildHatchAfterTadpole"))
     {
@@ -578,17 +573,17 @@ split
     if (vars.UharaSN2.CraftRecipeFlag("BasicFins") && settings["BasicFins"] && vars.DoCraftSplit("BasicFins")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("ImprovedFins") && settings["ImprovedFins"] && vars.DoCraftSplit("ImprovedFins")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("StandardAirTank") && settings["StandardAirTank"] && vars.DoCraftSplit("StandardAirTank")) return true;
-    if (vars.UharaSN2.CraftRecipeFlag("HighCapacityAirTank") && settings["HighCapacityAirTank"] && vars.DoCraftSplit("HighCapacityAirTank")) return true;
+    if ((vars.UharaSN2.CraftRecipeFlag("HighCapacityAirTank") || vars.Resolver.CheckFlag("CraftHighCapacityTank")) && settings["HighCapacityAirTank"] && vars.DoCraftSplit("HighCapacityAirTank")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("UltraHighCapacityAirTank") && settings["UltraHighCapacityAirTank"] && vars.DoCraftSplit("UltraHighCapacityAirTank")) return true;
     // Fabricator > Personal > Tools Splits
     if (vars.UharaSN2.CraftRecipeFlag("SurvivalMultitool") && settings["SurvivalMultitool"] && vars.DoCraftSplit("SurvivalMultitool")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("Flashlight") && settings["Flashlight"] && vars.DoCraftSplit("Flashlight")) return true;
-    if (vars.UharaSN2.CraftRecipeFlag("Scanner") && settings["Scanner"] && vars.DoCraftSplit("Scanner")) return true;
+    if ((vars.UharaSN2.CraftRecipeFlag("Scanner") || vars.Resolver.CheckFlag("CraftScannerSplit")) && settings["Scanner"] && vars.DoCraftSplit("Scanner")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("HabitatBuilder") && settings["HabitatBuilder"] && vars.DoCraftSplit("HabitatBuilder")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("RepairTool") && settings["RepairTool"] && vars.DoCraftSplit("RepairTool")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("SonicResonator") && settings["SonicResonator"] && vars.DoCraftSplit("SonicResonator")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("Wakemaker") && settings["Wakemaker"] && vars.DoCraftSplit("Wakemaker")) return true;
-    if (vars.UharaSN2.CraftRecipeFlag("Airbladder") && settings["Airbladder"] && vars.DoCraftSplit("Airbladder")) return true;
+    if ((vars.UharaSN2.CraftRecipeFlag("Airbladder") || vars.Resolver.CheckFlag("CraftAirbladder")) && settings["Airbladder"] && vars.DoCraftSplit("Airbladder")) return true;
     // Fabricator > Resources > Basic Materials Splits
     if (vars.UharaSN2.CraftRecipeFlag("MildAcid") && settings["MildAcid"] && vars.DoCraftSplit("MildAcid")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("SalvagedTitanium") && settings["SalvagedTitanium"] && vars.DoCraftSplit("SalvagedTitanium")) return true;
@@ -643,8 +638,8 @@ split
     if (vars.UharaSN2.CraftRecipeFlag("TadpoleDepthModuleMk.1") && settings["TadpoleDepthModuleMk.1"] && vars.DoCraftSplit("TadpoleDepthModuleMk.1")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("TadpoleDepthModuleMk.2") && settings["TadpoleDepthModuleMk.2"] && vars.DoCraftSplit("TadpoleDepthModuleMk.2")) return true;
     // Modification Station > Prototype Tool Modifications > Prototype Tool Modifications Splits
-    if (vars.UharaSN2.CraftRecipeFlag("Bioscanner") && settings["Bioscanner"] && vars.DoCraftSplit("Bioscanner")) return true;
-    if (vars.UharaSN2.CraftRecipeFlag("FeedbackResonator") && settings["FeedbackResonator"] && vars.DoCraftSplit("FeedbackResonator")) return true;
+    if ((vars.UharaSN2.CraftRecipeFlag("Bioscanner") || vars.Resolver.CheckFlag("CraftBioscanner")) && settings["Bioscanner"] && vars.DoCraftSplit("Bioscanner")) return true;
+    if ((vars.UharaSN2.CraftRecipeFlag("FeedbackResonator") || vars.Resolver.CheckFlag("CraftFeedbackResonator")) && settings["FeedbackResonator"] && vars.DoCraftSplit("FeedbackResonator")) return true;
     // Vehicle Fabricator > Vehicles Splits
     if (vars.UharaSN2.CraftRecipeFlag("Tadpole") && settings["Tadpole"] && vars.DoCraftSplit("Tadpole")) return true;
     if (vars.UharaSN2.CraftRecipeFlag("ScoutRayChassis") && settings["ScoutRayChassis"] && vars.DoCraftSplit("ScoutRayChassis")) return true;
