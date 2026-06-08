@@ -39,6 +39,11 @@ startup
         vars.CompletedCraftSplits.Clear();
     });
 
+    vars.ResetUnlockSplits = (Action)(() =>
+    {
+        try { vars.UharaSN2.ResetUnlockState(); } catch { }
+    });
+
     dynamic[,] _settings =
     {
         // Load Removal Testing Grouping
@@ -459,6 +464,7 @@ start
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.ResetUnlockSplits();
         vars.creativeStartArmed = false;
         vars.hatchAfterTadpoleArmed = false;
         vars.hatchAfterHighCapacityTankArmed = false;
@@ -469,6 +475,7 @@ start
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.ResetUnlockSplits();
         vars.hatchAfterTadpoleArmed = false;
         vars.hatchAfterHighCapacityTankArmed = false;
 
@@ -496,6 +503,7 @@ start
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.ResetUnlockSplits();
         vars.creativeStartArmed = false;
         vars.hatchAfterTadpoleArmed = false;
         vars.hatchAfterHighCapacityTankArmed = false;
@@ -680,6 +688,7 @@ onStart
     if (vars.MissingUhara) return;
 
     vars.ResetCraftSplits();
+    vars.ResetUnlockSplits();
     vars.introCutsceneLoadRemovalActive = false;
     vars.creativeStartArmed = false;
     vars.hatchAfterTadpoleArmed = false;
@@ -694,6 +703,7 @@ reset
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.ResetUnlockSplits();
         vars.creativeStartArmed = false;
         vars.hatchAfterTadpoleArmed = false;
         vars.hatchAfterHighCapacityTankArmed = false;
@@ -703,6 +713,7 @@ reset
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.ResetUnlockSplits();
         vars.creativeStartArmed = false;
         return true;
     }
@@ -710,6 +721,7 @@ reset
     {
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
+        vars.ResetUnlockSplits();
         vars.creativeStartArmed = false;
         return true;
     }
@@ -721,6 +733,7 @@ onReset
 
     vars.introCutsceneLoadRemovalActive = false;
     vars.ResetCraftSplits();
+    vars.ResetUnlockSplits();
     vars.creativeStartArmed = false;
     vars.hatchAfterTadpoleArmed = false;
     vars.hatchAfterHighCapacityTankArmed = false;
