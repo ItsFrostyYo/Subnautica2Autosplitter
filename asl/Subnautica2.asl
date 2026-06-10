@@ -63,6 +63,7 @@ startup
         { "Any%Group", true, "Any% Splits (Survival & Creative) + (Glitched & Glitchless)", null },
         // Any% Splits Individual Settings
         { "AdaptationSplit", false, "Split on Any Adaptations (Pressure, Digestion, Heat, Axum)", "Any%Group" },
+        { "BiobedAdaptationSplit", false, "Splits on Any Biobed Adaptations (Endurance, Dexterity)", "Any%Group" },
         { "IntroLifepodAscend", false, "Split on Lifepod Ascend (Intro)", "Any%Group" },
         { "IntroUnlockStartingDoor", false, "Split on Unlocking Door (Intro)", "Any%Group" },
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
@@ -315,6 +316,8 @@ init
     vars.Events.FunctionFlag("CreativeStartInteractWithBiomodStation", "WBP_CharacterCustomizationScreen_C", "WBP_CharacterCustomizationScreen_C", "ValidItemsChanged");
     // Any% Event Listeners
     vars.Events.FunctionFlag("AdaptationSplit", "BP_AngelCombCore_Ripple_NotifyState_C", "BP_AngelCombCore_Ripple_NotifyState_C", "Received_NotifyBegin");
+    vars.Events.FunctionFlag("BiobedAdaptationInventory", "SN2PlayerUpgradesPlayerStateComponent", "PlayerUpgradesComponent", "OnEventTrackerIncreaseInventoryEvent");
+    vars.Events.FunctionFlag("BiobedAdaptationToolbar", "SN2PlayerUpgradesPlayerStateComponent", "PlayerUpgradesComponent", "OnEventTrackerIncreaseToolbarEvent");
     vars.Events.FunctionFlag("IntroButtonPress", "BP_ScanningButton_C", "BP_ScanningButton_C_UAID_C87F54AE2B72FF0402", "BroadcastButtonPressed");
     vars.Events.FunctionFlag("IntroUnlockStartingDoor", "BP_ComputerTextInterface_Terminal_C", "BP_ComputerTextInterface_Terminal_C_UAID_C87F54AE2B72FF0402", "OnWidgetPopped_Event");
     vars.Events.FunctionFlag("IntroLifepodLeftLeverPressed", "BP_LifepodBay_Lever_C", "BP_LifepodBay_Lever_C_UAID_14AC60D60A5A096C02", "BroadcastButtonPressed");
@@ -544,6 +547,8 @@ split
 
     // Any% Splits
     if (vars.Resolver.CheckFlag("AdaptationSplit") && settings["AdaptationSplit"]) return true;
+    if (vars.Resolver.CheckFlag("BiobedAdaptationInventory") && settings["BiobedAdaptationSplit"]) return true;
+    if (vars.Resolver.CheckFlag("BiobedAdaptationToolbar") && settings["BiobedAdaptationSplit"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodAscend") && settings["IntroLifepodAscend"]) return true;
     if (vars.Resolver.CheckFlag("IntroButtonPress") && settings["IntroButtonPress"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodLeftLeverPressed") && settings["IntroLifepodLeftLeverPressed"]) return true;
