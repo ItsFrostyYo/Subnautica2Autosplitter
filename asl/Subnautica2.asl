@@ -60,7 +60,6 @@ startup
         { "AdaptationSplit", false, "Split on Any Adaptations (Pressure, Digestion, Heat, Axum)", "Any%Group" },
         { "BiobedAdaptationSplit", false, "Splits on Any Biobed Adaptations (Endurance, Dexterity)", "Any%Group" },
         { "IntroLifepodAscend", false, "Split on Lifepod Ascend (Intro)", "Any%Group" },
-        { "IntroUnlockStartingDoor", false, "Split on Unlocking Door (Intro)", "Any%Group" },
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
         { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Lever Pressed (Intro)", "Any%Group" },
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Release (Intro)", "Any%Group" },
@@ -112,7 +111,6 @@ init
     vars.Events.FunctionFlag("BiobedAdaptationInventory", "SN2PlayerUpgradesPlayerStateComponent", "PlayerUpgradesComponent", "OnEventTrackerIncreaseInventoryEvent");
     vars.Events.FunctionFlag("BiobedAdaptationToolbar", "SN2PlayerUpgradesPlayerStateComponent", "PlayerUpgradesComponent", "OnEventTrackerIncreaseToolbarEvent");
     vars.Events.FunctionFlag("IntroButtonPress", "BP_ScanningButton_C", "BP_ScanningButton_C_UAID_C87F54AE2B72FF0402", "BroadcastButtonPressed");
-    vars.Events.FunctionFlag("IntroUnlockStartingDoor", "BP_ComputerTextInterface_Terminal_C", "BP_ComputerTextInterface_Terminal_C_UAID_C87F54AE2B72FF0402", "OnWidgetPopped_Event");
     vars.Events.FunctionFlag("IntroLifepodLeftLeverPressed", "BP_LifepodBay_Lever_C", "BP_LifepodBay_Lever_C_UAID_14AC60D60A5A096C02", "BroadcastButtonPressed");
     vars.Events.FunctionFlag("IntroLifepodRightLeverPressed", "BP_LifepodBay_Chunk_Hatch_C", "BP_LifepodBay_Chunk_Hatch_C_UAID_14AC60D60A5A056C02", "RightLever");
     vars.Events.FunctionFlag("EndObservatoryButtonPress", "BP_Hologram_AxumFinale_Button_C", "BP_HologramButton_Axum_C_UAID_A036BC2B70CF8AA502", "ToggledOn");
@@ -181,7 +179,6 @@ split
     if (vars.Resolver.CheckFlag("IntroLifepodLeftLeverPressed") && settings["IntroLifepodLeftLeverPressed"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodRightLeverPressed") && settings["IntroLifepodRightLeverPressed"]) return true;
     if (vars.Resolver.CheckFlag("EndObservatoryButtonPress") && settings["EndObservatoryButtonPress"]) return true;
-    if (vars.Resolver.CheckFlag("IntroUnlockStartingDoor") && settings["IntroUnlockStartingDoor"] && vars.DoCraftSplit("IntroUnlockStartingDoor")) return true;
     if (vars.hatchAfterHighCapacityTankArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterHighCapacityTank"] && vars.DoCraftSplit("BuildHatchAfterHighCapacityTank"))
     {
         vars.hatchAfterHighCapacityTankArmed = false;
