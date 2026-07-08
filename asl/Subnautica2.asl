@@ -24,6 +24,10 @@ startup
     vars.introCutsceneLoadRemovalActive = false;
     vars.hatchAfterHighCapacityTankArmed = false;
     vars.CompletedCraftSplits = new HashSet<string>();
+    vars.survivalStart1Armed = false;
+    vars.survivalStartPending = false;
+    vars.survivalStartHandled = false;
+    vars.preserveSurvivalStartPendingOnReset = false;
 
     vars.DoCraftSplit = (Func<string, bool>)((key) =>
     {
@@ -42,11 +46,6 @@ startup
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
         vars.hatchAfterHighCapacityTankArmed = false;
-    });
-
-    vars.IsSurvivalStart = (Func<bool>)(() =>
-    {
-        return vars.Resolver.CheckFlag("SurvivalStart1") || vars.Resolver.CheckFlag("SurvivalStart2");
     });
 
     dynamic[,] _settings =
@@ -102,6 +101,7 @@ init
     if (vars.Utils.GWorld != IntPtr.Zero) vars.Uhara.Log("GWorld found at " + vars.Utils.GWorld.ToString("X"));
     if (vars.Utils.FNames != IntPtr.Zero) vars.Uhara.Log("FNames found at " + vars.Utils.FNames.ToString("X"));
 
+    vars.Events.FunctionFlag("SurvivalStart1Arm", "WBP_CharacterSelectScreen_C", "WBP_CharacterSelectScreen_C", "SequenceEvent__ENTRYPOINTWBP_CharacterSelectScreen");
     vars.Events.FunctionFlag("SurvivalStart1", "WBP_PDAScreen_C", "WBP_PDAScreen_C", "DummyBinding");
     vars.Events.FunctionFlag("SurvivalStart2", "ABP_SN2Player_LandMotion_Linked_C", "ABP_SN2Player_LandMotion_Linked_C", "EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_SN2Player_LandMotion_Linked_AnimGraphNode_TransitionResult_4D84B2574C72089535FC5D8B426BFF75");
     vars.Events.FunctionFlag("CreativeStartArm", "BP_CreativeModePlayerStart_C", "BP_CreativeModePlayerStart_C_UAID_F02F74AC8D0CF16102", "OnStartConditionsApplied");
@@ -132,14 +132,20 @@ init
 
     vars.introCutsceneLoadRemovalActive = false;
     vars.hatchAfterHighCapacityTankArmed = false;
+    vars.survivalStart1Armed = false;
+    vars.survivalStartPending = false;
+    vars.survivalStartHandled = false;
+    vars.preserveSurvivalStartPendingOnReset = false;
 }
 
 start
 {
     if (vars.MissingUhara) return false;
 
-    if (vars.IsSurvivalStart())
+    if (vars.survivalStartPending)
     {
+        vars.survivalStartPending = false;
+        vars.preserveSurvivalStartPendingOnReset = false;
         vars.ResetRunState();
         return true;
     }
@@ -156,6 +162,30 @@ update
     if (vars.MissingUhara) return;
 
     vars.Uhara.Update();
+
+    if (vars.Resolver.CheckFlag("SurvivalStart1Arm"))
+    {
+        vars.survivalStart1Armed = true;
+        vars.survivalStartPending = false;
+        vars.survivalStartHandled = false;
+        vars.preserveSurvivalStartPendingOnReset = false;
+    }
+
+    if (!vars.survivalStartHandled)
+    {
+        if (vars.survivalStart1Armed && vars.Resolver.CheckFlag("SurvivalStart1"))
+        {
+            vars.survivalStartPending = true;
+            vars.survivalStartHandled = true;
+            vars.survivalStart1Armed = false;
+        }
+        else if (vars.Resolver.CheckFlag("SurvivalStart2"))
+        {
+            vars.survivalStartPending = true;
+            vars.survivalStartHandled = true;
+            vars.survivalStart1Armed = false;
+        }
+    }
 
     if (vars.Resolver.CheckFlag("IntroLifepodAscend"))
         vars.introCutsceneLoadRemovalActive = true;
@@ -209,18 +239,21 @@ reset
 
     if (vars.Resolver.CheckFlag("ResetOnMainMenu") && settings["ResetOnMainMenu"])
     {
+        vars.preserveSurvivalStartPendingOnReset = false;
         vars.ResetRunState();
         return true;
     }
 
-    if (vars.IsSurvivalStart() && settings["ResetOnNewGameSurvival"])
+    if (vars.survivalStartPending && settings["ResetOnNewGameSurvival"])
     {
+        vars.preserveSurvivalStartPendingOnReset = true;
         vars.ResetRunState();
         return true;
     }
 
     if (vars.Resolver.CheckFlag("CreativeStartArm") && settings["ResetOnNewGameCreative"])
     {
+        vars.preserveSurvivalStartPendingOnReset = false;
         vars.ResetRunState();
         return true;
     }
@@ -230,6 +263,10 @@ onReset
 {
     if (vars.MissingUhara) return;
 
+    if (!vars.preserveSurvivalStartPendingOnReset)
+        vars.survivalStartPending = false;
+
+    vars.preserveSurvivalStartPendingOnReset = false;
     vars.ResetRunState();
 }
 
