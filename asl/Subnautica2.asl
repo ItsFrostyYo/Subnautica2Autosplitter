@@ -24,6 +24,8 @@ startup
     vars.introCutsceneLoadRemovalActive = false;
     vars.hatchAfterHighCapacityTankArmed = false;
     vars.CompletedCraftSplits = new HashSet<string>();
+    vars.buildHatchCount = 0;
+    vars.pendingBuild2ndHatch = false;
     vars.survivalStart1Armed = false;
     vars.survivalStartPending = false;
     vars.survivalStartHandled = false;
@@ -46,6 +48,8 @@ startup
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
         vars.hatchAfterHighCapacityTankArmed = false;
+        vars.buildHatchCount = 0;
+        vars.pendingBuild2ndHatch = false;
     });
 
     dynamic[,] _settings =
@@ -62,8 +66,10 @@ startup
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
         { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Lever Pressed (Intro)", "Any%Group" },
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Release (Intro)", "Any%Group" },
-        { "BuildHatchAfterHighCapacityTank", false, "Split on 2nd Base (Glitchless) [Building Hatch after High Capacity Tank]", "Any%Group" },
+        { "Build2ndHatch", false, "Split on 2nd Base (2nd Hatch)", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
+        { "EnterTadpole", false, "Split on Entering Tadpole", "Any%Group"},
+        
 
         { "MiscellaneousSplitsGroup", true, "Miscellaneous Splits", null },
         { "FirstScan", false, "Split on First Scan", "MiscellaneousSplitsGroup" },
@@ -83,6 +89,19 @@ startup
         { "PrototypeToolModificationsPrototypeToolModificationsGroup", true, "Prototype Tool Modifications", "PrototypeToolModificationsGroup" },
         { "Bioscanner", false, "Split on Crafting Bioscanner", "PrototypeToolModificationsPrototypeToolModificationsGroup" },
         { "FeedbackResonator", false, "Split on Crafting Feedback Resonator", "PrototypeToolModificationsPrototypeToolModificationsGroup" },
+        
+        // Habitat Builder Crafts Grouping
+        { "HabitatBuilderCraftsGroup", true, "Habitat Builder Crafts", null },
+
+        // Standard Elements Grouping
+        //{ "HabitatBuilderStandardElementsGroup", false, "Standard Elements", "HabitatBuilderCraftsGroup" },
+        //{ "HabitatBuilderBasePiecesGroup", false, "Base Pieces", "HabitatBuilderStandardElementsGroup" },
+
+        // Interior Facilities Grouping
+        { "HabitatBuilderInteriorFacilitiesGroup", false, "Interior Facilities", "HabitatBuilderCraftsGroup" },
+        { "HabitatBuilderProductionGroup", false, "Production", "HabitatBuilderInteriorFacilitiesGroup" },
+        { "BuildModificationStation", false, "Split on Build Modification Station", "HabitatBuilderProductionGroup" },
+        { "BuildProcessor", false, "Split on Building Processor", "HabitatBuilderProductionGroup" },
     };
 
     vars.Uhara.Settings.Create(_settings);
@@ -121,6 +140,10 @@ init
     vars.Events.FunctionFlag("CraftScannerSplit", "BP_Scanner_C", "BP_Scanner_C", "ReceiveBeginPlay");
     vars.Events.FunctionFlag("CraftAirbladder", "BP_AirBladder_C", "BP_AirBladder_C", "ExecuteUbergraph_BP_AirBladder");
 
+    vars.Events.FunctionFlag("EnterTadpole", "BP_Tadpole_C", "BP_Tadpole_C", "OnPilotEntered_BP");
+    vars.Events.FunctionFlag("BuildProcessor", "BP_ProcessorStation_C", "BP_ProcessorStation_C", "OnAttached");
+    vars.Events.FunctionFlag("BuildModificationStation", "BP_ModificationStation_C", "BP_ModificationStation_C", "OnPlacementChanged");
+
     vars.Events.FunctionFlag("IntroLifepodAscend", "BP_NarrativeSignal_C", "BP_NarrativeSignal_C_UAID_60CF846429E036A502", "OnUnlocked_62920D1448BD71509596E5B554437304");
     vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
 
@@ -132,6 +155,8 @@ init
 
     vars.introCutsceneLoadRemovalActive = false;
     vars.hatchAfterHighCapacityTankArmed = false;
+    vars.buildHatchCount = 0;
+    vars.pendingBuild2ndHatch = false;
     vars.survivalStart1Armed = false;
     vars.survivalStartPending = false;
     vars.survivalStartHandled = false;
@@ -195,6 +220,13 @@ update
 
     if (vars.Resolver.CheckFlag("CraftHighCapacityTank"))
         vars.hatchAfterHighCapacityTankArmed = true;
+
+    if (vars.Resolver.CheckFlag("BuildHatch"))
+    {
+        vars.buildHatchCount++;
+        if (vars.buildHatchCount == 2)
+            vars.pendingBuild2ndHatch = true;
+    }
 }
 
 split
@@ -209,9 +241,9 @@ split
     if (vars.Resolver.CheckFlag("IntroLifepodLeftLeverPressed") && settings["IntroLifepodLeftLeverPressed"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodRightLeverPressed") && settings["IntroLifepodRightLeverPressed"]) return true;
     if (vars.Resolver.CheckFlag("EndObservatoryButtonPress") && settings["EndObservatoryButtonPress"]) return true;
-    if (vars.hatchAfterHighCapacityTankArmed && vars.Resolver.CheckFlag("BuildHatch") && settings["BuildHatchAfterHighCapacityTank"] && vars.DoCraftSplit("BuildHatchAfterHighCapacityTank"))
+    if (vars.pendingBuild2ndHatch && settings["Build2ndHatch"] && vars.DoCraftSplit("Build2ndHatch"))
     {
-        vars.hatchAfterHighCapacityTankArmed = false;
+        vars.pendingBuild2ndHatch = false;
         return true;
     }
 
@@ -224,7 +256,10 @@ split
     if (vars.Resolver.CheckFlag("CraftAirbladder") && settings["Airbladder"] && vars.DoCraftSplit("Airbladder")) return true;
     if (vars.Resolver.CheckFlag("CraftBioscanner") && settings["Bioscanner"] && vars.DoCraftSplit("Bioscanner")) return true;
     if (vars.Resolver.CheckFlag("CraftFeedbackResonator") && settings["FeedbackResonator"] && vars.DoCraftSplit("FeedbackResonator")) return true;
-}
+    if (vars.Resolver.CheckFlag("EnterTadpole") && settings["EnterTadpole"] && vars.DoCraftSplit("EnterTadpole")) return true;
+    if (vars.Resolver.CheckFlag("BuildModificationStation") && settings["BuildModificationStation"] && vars.DoCraftSplit("BuildModificationStation")) return true;
+    if (vars.Resolver.CheckFlag("BuildProcessor") && settings["BuildProcessor"] && vars.DoCraftSplit("BuildProcessor")) return true;
+}   
 
 onStart
 {
