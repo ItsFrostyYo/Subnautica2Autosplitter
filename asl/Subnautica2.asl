@@ -56,7 +56,6 @@ startup
     {
         { "ResetGroup", true, "Reset Types", null },
         { "ResetOnMainMenu", false, "Reset on Main Menu", "ResetGroup" },
-        { "ResetOnNewGameSurvival", false, "Reset on New Game Start (Survival)", "ResetGroup" },
         { "ResetOnNewGameCreative", false, "Reset on New Game Start (Creative)", "ResetGroup" },
 
         { "Any%Group", true, "Any% Splits (Survival & Creative) + (Glitched & Glitchless)", null },
@@ -275,13 +274,6 @@ reset
     if (vars.Resolver.CheckFlag("ResetOnMainMenu") && settings["ResetOnMainMenu"])
     {
         vars.preserveSurvivalStartPendingOnReset = false;
-        vars.ResetRunState();
-        return true;
-    }
-
-    if (vars.survivalStartPending && settings["ResetOnNewGameSurvival"])
-    {
-        vars.preserveSurvivalStartPendingOnReset = true;
         vars.ResetRunState();
         return true;
     }
