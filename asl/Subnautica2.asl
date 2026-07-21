@@ -26,6 +26,7 @@ startup
     vars.CompletedCraftSplits = new HashSet<string>();
     vars.buildHatchCount = 0;
     vars.pendingBuild2ndHatch = false;
+    vars.saveFileStartPending = false;
     vars.survivalStart1Armed = false;
     vars.survivalStartPending = false;
     vars.survivalStartHandled = false;
@@ -50,13 +51,15 @@ startup
         vars.hatchAfterHighCapacityTankArmed = false;
         vars.buildHatchCount = 0;
         vars.pendingBuild2ndHatch = false;
+        vars.saveFileStartPending = false;
     });
 
     dynamic[,] _settings =
     {
-        { "ResetGroup", true, "Reset Types", null },
-        { "ResetOnMainMenu", false, "Reset on Main Menu", "ResetGroup" },
-        { "ResetOnNewGameCreative", false, "Reset on New Game Start (Creative)", "ResetGroup" },
+        { "Start&ResetGroup", true, "Extra Start/Reset Types", null },
+        { "ResetOnMainMenu", false, "Reset on Main Menu", "Start&ResetGroup" },
+        { "ResetOnNewGameCreative", false, "Reset on New Game Start (Creative)", "Start&ResetGroup" },
+        { "SaveFileStart", false, "Start on First Interaction or Movement (Creative/SaveFile)", "Start&ResetGroup" },
 
         { "Any%Group", true, "Any% Splits (Survival & Creative) + (Glitched & Glitchless)", null },
         { "AdaptationSplit", false, "Split on Any Adaptations (Pressure, Digestion, Heat, Axum)", "Any%Group" },
@@ -124,6 +127,15 @@ init
     vars.Events.FunctionFlag("SurvivalStart2", "ABP_SN2Player_LandMotion_Linked_C", "ABP_SN2Player_LandMotion_Linked_C", "EvaluateGraphExposedInputs_ExecuteUbergraph_ABP_SN2Player_LandMotion_Linked_AnimGraphNode_TransitionResult_4D84B2574C72089535FC5D8B426BFF75");
     vars.Events.FunctionFlag("CreativeStartArm", "BP_CreativeModePlayerStart_C", "BP_CreativeModePlayerStart_C_UAID_F02F74AC8D0CF16102", "OnStartConditionsApplied");
     vars.Events.FunctionFlag("ResetOnMainMenu", "WBP_MainLobbyScreen_C", "WBP_MainLobbyScreen_C", "Construct");
+    
+    vars.Events.FunctionFlag("SaveStartInteractWithStorage", "BP_Character_01_C", "BP_Character_01_C", "OnInteractWithOtherInventory");
+    vars.Events.FunctionFlag("SaveStartFirstMovement", "GA_Walk_C", "GA_Walk_C", "OnStarted_CD32F07B44EEF144D8A18C86FCFC3E47");
+    vars.Events.FunctionFlag("SaveStartInteractWithFabricator", "WBP_FabricatorScreen_C", "WBP_FabricatorScreen_C", "RecipeListEntriesRefreshed");
+    vars.Events.FunctionFlag("SaveStartFirstJump", "BP_Character_01_C", "BP_Character_01_C", "OnJumped");
+    vars.Events.FunctionFlag("SaveStartOpenPDA", "WBP_Inventory_C", "WBP_Inventory_C", "ExecuteUbergraph_WBP_Inventory");
+    vars.Events.FunctionFlag("SaveStartInteractWithNoA", "WBP_ComputerTextInterface_C", "WBP_ComputerTextInterface_C", "UpdateDialogueOptions");
+    vars.Events.FunctionFlag("SaveStartFirstSwim", "GA_Swim_C", "GA_Swim_C", "OnStarted_E7B4EFF4450EE32D27781F951D040059");
+    vars.Events.FunctionFlag("SaveStartInteractWithBiomodStation", "WBP_CharacterCustomizationScreen_C", "WBP_CharacterCustomizationScreen_C", "ValidItemsChanged");
 
     vars.Events.FunctionFlag("AdaptationSplit", "BP_AngelCombCore_Ripple_NotifyState_C", "BP_AngelCombCore_Ripple_NotifyState_C", "Received_NotifyBegin");
     vars.Events.FunctionFlag("BiobedAdaptationInventory", "SN2PlayerUpgradesPlayerStateComponent", "PlayerUpgradesComponent", "OnEventTrackerIncreaseInventoryEvent");
@@ -156,6 +168,7 @@ init
     vars.hatchAfterHighCapacityTankArmed = false;
     vars.buildHatchCount = 0;
     vars.pendingBuild2ndHatch = false;
+    vars.saveFileStartPending = false;
     vars.survivalStart1Armed = false;
     vars.survivalStartPending = false;
     vars.survivalStartHandled = false;
@@ -170,6 +183,13 @@ start
     {
         vars.survivalStartPending = false;
         vars.preserveSurvivalStartPendingOnReset = false;
+        vars.ResetRunState();
+        return true;
+    }
+
+    if (vars.saveFileStartPending)
+    {
+        vars.saveFileStartPending = false;
         vars.ResetRunState();
         return true;
     }
@@ -209,6 +229,21 @@ update
             vars.survivalStartHandled = true;
             vars.survivalStart1Armed = false;
         }
+    }
+
+    if (settings["SaveFileStart"] &&
+    (
+        vars.Resolver.CheckFlag("SaveStartInteractWithStorage") ||
+        vars.Resolver.CheckFlag("SaveStartFirstMovement") ||
+        vars.Resolver.CheckFlag("SaveStartInteractWithFabricator") ||
+        vars.Resolver.CheckFlag("SaveStartFirstJump") ||
+        vars.Resolver.CheckFlag("SaveStartOpenPDA") ||
+        vars.Resolver.CheckFlag("SaveStartInteractWithNoA") ||
+        vars.Resolver.CheckFlag("SaveStartFirstSwim") ||
+        vars.Resolver.CheckFlag("SaveStartInteractWithBiomodStation")
+    ))
+    {
+        vars.saveFileStartPending = true;
     }
 
     if (vars.Resolver.CheckFlag("IntroLifepodAscend"))
