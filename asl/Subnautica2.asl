@@ -3,7 +3,7 @@ state("Subnautica2-WinGDK-Shipping"){}
 
 startup
 {
-    vars.ScriptVersion = "v1.3.6";
+    vars.ScriptVersion = "v1.3.8";
     vars.MissingUhara = !File.Exists("Components/uharaSN2");
     if (vars.MissingUhara)
     {
@@ -25,6 +25,7 @@ startup
     vars.hatchAfterHighCapacityTankArmed = false;
     vars.CompletedCraftSplits = new HashSet<string>();
     vars.tadpoleAfterSonicResonatorArmed = false;
+    vars.tadpoleEntriesAfterSonicResonator = 0;
     vars.saveFileStartPending = false;
     vars.survivalStart1Armed = false;
     vars.survivalStartPending = false;
@@ -49,6 +50,7 @@ startup
         vars.ResetCraftSplits();
         vars.hatchAfterHighCapacityTankArmed = false;
         vars.tadpoleAfterSonicResonatorArmed = false;
+        vars.tadpoleEntriesAfterSonicResonator = 0;
         vars.saveFileStartPending = false;
     });
 
@@ -66,7 +68,8 @@ startup
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
         { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Lever Pressed (Intro)", "Any%Group" },
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Release (Intro)", "Any%Group" },
-        { "TadpoleAfterSonicResonator", false, "Tadpole after Sonic Resonator", "Any%Group" },
+        { "TadpoleAfterSonicResonator", false, "Enter Tadpole after Sonic Resonator", "Any%Group" },
+        { "TadpoleAfterSonicResonatorBlastTrenchCrystal", false, "Enter Tadpole After Sonic Resonator Blast | Skips Trench Crystal", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
         { "EnterTadpole", false, "Split on Entering Tadpole", "Any%Group"},
         
@@ -163,6 +166,7 @@ init
     vars.introCutsceneLoadRemovalActive = false;
     vars.hatchAfterHighCapacityTankArmed = false;
     vars.tadpoleAfterSonicResonatorArmed = false;
+    vars.tadpoleEntriesAfterSonicResonator = 0;
     vars.saveFileStartPending = false;
     vars.survivalStart1Armed = false;
     vars.survivalStartPending = false;
@@ -251,7 +255,10 @@ update
         vars.hatchAfterHighCapacityTankArmed = true;
 
     if (vars.Resolver.CheckFlag("SonicResonatorBlastShot"))
+    {
         vars.tadpoleAfterSonicResonatorArmed = true;
+        vars.tadpoleEntriesAfterSonicResonator = 0;
+    }
 }
 
 split
@@ -267,18 +274,45 @@ split
     if (vars.Resolver.CheckFlag("IntroLifepodRightLeverPressed") && settings["IntroLifepodRightLeverPressed"]) return true;
     if (vars.Resolver.CheckFlag("EndObservatoryButtonPress") && settings["EndObservatoryButtonPress"]) return true;
 
-    // Sonic Resonator Blast arms this split. The next Tadpole entry consumes the arm.
+    // One Sonic Resonator Blast arms both route-specific Tadpole splits:
+    //   1st Tadpole entry -> "Tadpole after Sonic Resonator"
+    //   2nd Tadpole entry -> "Tadpole After Sonic Resonator Blast | Trench Crystal"
     if (vars.Resolver.CheckFlag("EnterTadpole"))
     {
-        bool splitAfterSonic =
-            vars.tadpoleAfterSonicResonatorArmed &&
-            settings["TadpoleAfterSonicResonator"] &&
-            vars.DoCraftSplit("TadpoleAfterSonicResonator");
+        bool splitAfterFirstTadpole = false;
+        bool splitAfterSecondTadpole = false;
 
         if (vars.tadpoleAfterSonicResonatorArmed)
-            vars.tadpoleAfterSonicResonatorArmed = false;
+        {
+            vars.tadpoleEntriesAfterSonicResonator++;
 
-        if (splitAfterSonic) return true;
+            if (vars.tadpoleEntriesAfterSonicResonator == 1)
+            {
+                splitAfterFirstTadpole =
+                    settings["TadpoleAfterSonicResonator"] &&
+                    vars.DoCraftSplit("TadpoleAfterSonicResonator");
+
+                // Keep the arm active when the Trench Crystal split is enabled,
+                // so the following Tadpole entry can trigger its own split.
+                if (!settings["TadpoleAfterSonicResonatorBlastTrenchCrystal"])
+                {
+                    vars.tadpoleAfterSonicResonatorArmed = false;
+                    vars.tadpoleEntriesAfterSonicResonator = 0;
+                }
+            }
+            else if (vars.tadpoleEntriesAfterSonicResonator >= 2)
+            {
+                splitAfterSecondTadpole =
+                    settings["TadpoleAfterSonicResonatorBlastTrenchCrystal"] &&
+                    vars.DoCraftSplit("TadpoleAfterSonicResonatorBlastTrenchCrystal");
+
+                vars.tadpoleAfterSonicResonatorArmed = false;
+                vars.tadpoleEntriesAfterSonicResonator = 0;
+            }
+        }
+
+        if (splitAfterFirstTadpole) return true;
+        if (splitAfterSecondTadpole) return true;
         if (settings["EnterTadpole"] && vars.DoCraftSplit("EnterTadpole")) return true;
     }
 
