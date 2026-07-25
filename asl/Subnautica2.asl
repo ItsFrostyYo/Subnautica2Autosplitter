@@ -3,7 +3,7 @@ state("Subnautica2-WinGDK-Shipping"){}
 
 startup
 {
-    vars.ScriptVersion = "v1.0.8";
+    vars.ScriptVersion = "v1.3.6";
     vars.MissingUhara = !File.Exists("Components/uharaSN2");
     if (vars.MissingUhara)
     {
@@ -24,8 +24,7 @@ startup
     vars.introCutsceneLoadRemovalActive = false;
     vars.hatchAfterHighCapacityTankArmed = false;
     vars.CompletedCraftSplits = new HashSet<string>();
-    vars.buildHatchCount = 0;
-    vars.pendingBuild2ndHatch = false;
+    vars.tadpoleAfterSonicResonatorArmed = false;
     vars.saveFileStartPending = false;
     vars.survivalStart1Armed = false;
     vars.survivalStartPending = false;
@@ -49,8 +48,7 @@ startup
         vars.introCutsceneLoadRemovalActive = false;
         vars.ResetCraftSplits();
         vars.hatchAfterHighCapacityTankArmed = false;
-        vars.buildHatchCount = 0;
-        vars.pendingBuild2ndHatch = false;
+        vars.tadpoleAfterSonicResonatorArmed = false;
         vars.saveFileStartPending = false;
     });
 
@@ -68,14 +66,13 @@ startup
         { "IntroButtonPress", false, "Split on Analyze Button Press (Intro)", "Any%Group" },
         { "IntroLifepodLeftLeverPressed", false, "Split on Lifepod Lever Pressed (Intro)", "Any%Group" },
         { "IntroLifepodRightLeverPressed", false, "Split on Lifepod Release (Intro)", "Any%Group" },
-        { "Build2ndHatch", false, "Split on 2nd Base (2nd Hatch)", "Any%Group" },
+        { "TadpoleAfterSonicResonator", false, "Tadpole after Sonic Resonator", "Any%Group" },
         { "EndObservatoryButtonPress", true, "Split on Observatory Button (End)", "Any%Group" },
         { "EnterTadpole", false, "Split on Entering Tadpole", "Any%Group"},
         
 
         { "MiscellaneousSplitsGroup", true, "Miscellaneous Splits", null },
         { "FirstScan", false, "Split on First Scan", "MiscellaneousSplitsGroup" },
-        // { "SonicResonatorBlastShot", false, "Split on Sonic Resonator Blast Shot", "MiscellaneousSplitsGroup" },
         // { "InteractWithSingleBed", false, "Split on Interact with Single Bed", "MiscellaneousSplitsGroup" },
 
         { "CraftSplitsGrouping", true, "Craft Splits", null },
@@ -159,15 +156,13 @@ init
     vars.Events.FunctionFlag("IntroCutsceneLoadRemovalEnd", "BP_LifepodManager_C", "BP_LifepodManager_C_UAID_047C166D6A3238B502", "OnSequenceEnd");
 
     vars.Events.FunctionFlag("FirstScan", "GA_Scan_C", "GA_Scan_C", "OnCompleted_D22E6C2C4F34F79DF063E88A2D0679BA");
-    // vars.Events.FunctionFlag("SonicResonatorBlastShot", "GA_SonicResonator_Blast_C", "GA_SonicResonator_Blast_C", "OnCompleted_B65B54F241049DF1F76DA59AAF9E5B09");
+    vars.Events.FunctionFlag("SonicResonatorBlastShot", "GA_SonicResonator_Blast_C", "GA_SonicResonator_Blast_C", "OnCompleted_B65B54F241049DF1F76DA59AAF9E5B09");
     // vars.Events.FunctionFlag("InteractWithSingleBed", "BP_BedSingle_C", "BP_BedSingle_C", "AttachEvent");
 
-    vars.Events.FunctionFlag("BuildHatch", "BP_BaseHatch_C", "BP_BaseHatch_C", "BndEvt__BP_BaseHatch_UWEAttachable_K2Node_ComponentBoundEvent_0_OnAttached__DelegateSignature");
 
     vars.introCutsceneLoadRemovalActive = false;
     vars.hatchAfterHighCapacityTankArmed = false;
-    vars.buildHatchCount = 0;
-    vars.pendingBuild2ndHatch = false;
+    vars.tadpoleAfterSonicResonatorArmed = false;
     vars.saveFileStartPending = false;
     vars.survivalStart1Armed = false;
     vars.survivalStartPending = false;
@@ -255,12 +250,8 @@ update
     if (vars.Resolver.CheckFlag("CraftHighCapacityTank"))
         vars.hatchAfterHighCapacityTankArmed = true;
 
-    if (vars.Resolver.CheckFlag("BuildHatch"))
-    {
-        vars.buildHatchCount++;
-        if (vars.buildHatchCount == 2)
-            vars.pendingBuild2ndHatch = true;
-    }
+    if (vars.Resolver.CheckFlag("SonicResonatorBlastShot"))
+        vars.tadpoleAfterSonicResonatorArmed = true;
 }
 
 split
@@ -275,13 +266,22 @@ split
     if (vars.Resolver.CheckFlag("IntroLifepodLeftLeverPressed") && settings["IntroLifepodLeftLeverPressed"]) return true;
     if (vars.Resolver.CheckFlag("IntroLifepodRightLeverPressed") && settings["IntroLifepodRightLeverPressed"]) return true;
     if (vars.Resolver.CheckFlag("EndObservatoryButtonPress") && settings["EndObservatoryButtonPress"]) return true;
-    if (vars.pendingBuild2ndHatch && settings["Build2ndHatch"] && vars.DoCraftSplit("Build2ndHatch"))
+
+    // Sonic Resonator Blast arms this split. The next Tadpole entry consumes the arm.
+    if (vars.Resolver.CheckFlag("EnterTadpole"))
     {
-        vars.pendingBuild2ndHatch = false;
-        return true;
+        bool splitAfterSonic =
+            vars.tadpoleAfterSonicResonatorArmed &&
+            settings["TadpoleAfterSonicResonator"] &&
+            vars.DoCraftSplit("TadpoleAfterSonicResonator");
+
+        if (vars.tadpoleAfterSonicResonatorArmed)
+            vars.tadpoleAfterSonicResonatorArmed = false;
+
+        if (splitAfterSonic) return true;
+        if (settings["EnterTadpole"] && vars.DoCraftSplit("EnterTadpole")) return true;
     }
 
-    // if (vars.Resolver.CheckFlag("SonicResonatorBlastShot") && settings["SonicResonatorBlastShot"]) return true;
     // if (vars.Resolver.CheckFlag("InteractWithSingleBed") && settings["InteractWithSingleBed"]) return true;
     if (vars.Resolver.CheckFlag("FirstScan") && settings["FirstScan"] && vars.DoCraftSplit("FirstScan")) return true;
 
@@ -290,7 +290,6 @@ split
     if (vars.Resolver.CheckFlag("CraftAirbladder") && settings["Airbladder"] && vars.DoCraftSplit("Airbladder")) return true;
     if (vars.Resolver.CheckFlag("CraftBioscanner") && settings["Bioscanner"] && vars.DoCraftSplit("Bioscanner")) return true;
     if (vars.Resolver.CheckFlag("CraftFeedbackResonator") && settings["FeedbackResonator"] && vars.DoCraftSplit("FeedbackResonator")) return true;
-    if (vars.Resolver.CheckFlag("EnterTadpole") && settings["EnterTadpole"] && vars.DoCraftSplit("EnterTadpole")) return true;
     if (vars.Resolver.CheckFlag("BuildModificationStation") && settings["BuildModificationStation"] && vars.DoCraftSplit("BuildModificationStation")) return true;
     if (vars.Resolver.CheckFlag("BuildProcessor") && settings["BuildProcessor"] && vars.DoCraftSplit("BuildProcessor")) return true;
 }   

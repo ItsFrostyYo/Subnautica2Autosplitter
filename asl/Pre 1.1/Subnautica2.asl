@@ -3,7 +3,7 @@ state("Subnautica2-WinGDK-Shipping"){}
 
 startup
 {
-    vars.ScriptVersion = "v1.0.7";
+    vars.ScriptVersion = "v1.2.9";
     vars.MissingUhara = !File.Exists("Components/uharaSN2");
     if (vars.MissingUhara)
     {
